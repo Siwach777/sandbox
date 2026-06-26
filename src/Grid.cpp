@@ -30,7 +30,7 @@ void Grid::render(sf::RenderWindow& window) {
 }
 
 TileType Grid::getTile(int x, int y) const {
-    if (inBounds) {
+    if (inBounds (x, y)) {
         return m_tiles[y * m_width + x];
     }
     return TileType::Dirt;
@@ -38,7 +38,7 @@ TileType Grid::getTile(int x, int y) const {
 
 sf::Vector2i Grid::worldToGrid(sf::Vector2f worldPos) const {
     return {
-        static_cast<int>(worldPos.x / m_tileSize)
+        static_cast<int>(worldPos.x / m_tileSize),
         static_cast<int>(worldPos.y / m_tileSize)
     };
 }
