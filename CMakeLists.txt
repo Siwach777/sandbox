@@ -15,6 +15,7 @@ add_executable(world_sim
 	src/main.cpp
 	src/Game.cpp
 	src/Grid.cpp
+	src/Camera.cpp
 )
 
 target_include_directories(world_sim PRIVATE
