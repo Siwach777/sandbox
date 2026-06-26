@@ -13,6 +13,7 @@ find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
 
 add_executable(world_sim
 	src/main.cpp
+	src/Game.cpp
 )
 
 target_link_libraries(world_sim PRIVATE
