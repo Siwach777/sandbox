@@ -1,6 +1,7 @@
 #include "Game.hpp"
+#include "Grid.hpp"
 
-Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM") {
+Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM"), m_grid(100, 100, 16.f) {
     m_window.setFramerateLimit(static_cast<unsigned int>(TICKS_PER_SECOND));
 }
 
@@ -46,6 +47,8 @@ void Game::update(sf::Time dt) {
 void Game::render() {
     m_window.clear(sf::Color(30, 30, 40));
 
+    m_grid.render(m_window);
+
     m_window.display();
 }
 
@@ -54,10 +57,10 @@ void Game::processEvents() {
         if (event->is<sf::Event::Closed>()) {
             m_window.close();
         }
-        if (auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-            // if (keyPressed->code == sf::Keyboard::Escape) {
-            //     m_window.close();
-            // }
+        if (auto* key = event->getIf<sf::Event::KeyPressed>()) {
+            if (key->code == sf::Keyboard::Key::Escape) {
+                m_window.close();
+            }
         }
     }
 }
