@@ -12,8 +12,11 @@ Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM")
     }
 
     // Entity
-    for (int i = 0; i < 25000; ++i) {
-        EntityFactory::createAnt(m_world, Random::getFloat(10.f, 1260.f), Random::getFloat(10.f, 700.f));
+    for (int i = 0; i < 2500; ++i) {
+        Entity e = EntityFactory::createAnt(m_world, Random::getFloat(10.f, 1260.f), Random::getFloat(10.f, 700.f));
+        auto& wander = m_world.wanders[e];
+        wander.speed *= Random::getFloat(0.8f, 1.2f);
+        wander.changeInterval *= Random::getFloat(0.5f, 1.5f);
     }
 }
 
