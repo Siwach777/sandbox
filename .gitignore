@@ -17,3 +17,6 @@ Thumbs.db
 *.a
 *.so
 *.out
+
+# Docs
+docs/roadmap/
