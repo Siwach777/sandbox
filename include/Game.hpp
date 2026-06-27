@@ -14,6 +14,8 @@ class Game {
         void render();
 
         sf::RenderWindow m_window;
+        sf::Vector2f m_mouseWorldPos;
+        sf::Vector2i m_hoveredTile;
 
         Grid m_grid;
         Camera m_camera;

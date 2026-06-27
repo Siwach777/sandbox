@@ -58,6 +58,10 @@ void Game::update(sf::Time dt) {
         m_camera.move(move); 
     }
 
+    sf::Vector2i mousePixel = sf::Mouse::getPosition(m_window);
+    m_mouseWorldPos = m_window.mapPixelToCoords(mousePixel, m_camera.getView());
+    m_hoveredTile = m_grid.worldToGrid(m_mouseWorldPos);
+
 }
 
 void Game::render() {
@@ -65,6 +69,20 @@ void Game::render() {
 
     m_window.setView(m_camera.getView());
     m_grid.render(m_window);
+
+    // Mouse Highlight
+    if (m_grid.inBounds(m_hoveredTile.x, m_hoveredTile.y)) {
+        float ts = m_grid.getTileSize();
+        sf::RectangleShape highlight({ts - 1.f, ts - 1.f});
+        highlight.setPosition({
+            static_cast<float>(m_hoveredTile.x) * ts,
+            static_cast<float>(m_hoveredTile.y) * ts
+        });
+        highlight.setFillColor(sf::Color(255, 255, 255, 60));
+        highlight.setOutlineColor(sf::Color::White);
+        highlight.setOutlineThickness(1.f);
+        m_window.draw(highlight);
+    }
 
     m_window.display();
 }
@@ -80,10 +98,20 @@ void Game::processEvents() {
                 m_window.close();
             }
         }
-        // Mouse
+        // Mouse Scroll
         if (auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>()) {
             float factor = (scroll->delta > 0) ? 0.9f : 1.1f;
             m_camera.zoom(factor);
+        }
+        // Mouse Button
+        if (auto* pressed = event->getIf<sf::Event::MouseButtonPressed>()) {
+            if (pressed->button == sf::Mouse::Button::Left) {
+                if (m_grid.inBounds(m_hoveredTile.x, m_hoveredTile.y)) {
+                    m_window.setTitle("Clicked tile: (" +
+                    std::to_string(m_hoveredTile.x) + ", " +
+                    std::to_string(m_hoveredTile.y) + ")");
+                }
+            }
         }
     }
 }
