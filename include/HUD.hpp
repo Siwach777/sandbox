@@ -11,7 +11,8 @@ class HUD {
                     sf::Vector2f CameraPos,
                     float zoom,
                     const std::string& selectedTileName,
-                    const std::string& hoveredInfo);
+                    const std::string& hoveredInfo,
+                    const std::string& selectionInfo);
 
     private:
             sf::Font m_font;

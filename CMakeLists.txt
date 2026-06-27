@@ -18,6 +18,7 @@ add_executable(world_sim
 	src/Camera.cpp
 	src/HUD.cpp
 	src/ECS/World.cpp
+	src/ECS/EntityFactory.cpp
 	src/Systems/RenderSystem.cpp
 )
 

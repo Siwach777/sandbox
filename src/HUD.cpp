@@ -13,7 +13,7 @@ void HUD::drawText(sf::RenderWindow& window, const std::string&str, sf::Vector2f
     window.draw(text);
 }
 
-void HUD::render(sf::RenderWindow& window, float fps, sf::Vector2f cameraPos, float zoom, const std::string& selectedTileName, const std::string& hoveredInfo) {
+void HUD::render(sf::RenderWindow& window, float fps, sf::Vector2f cameraPos, float zoom, const std::string& selectedTileName, const std::string& hoveredInfo, const std::string& selectionInfo) {
     if (!m_initialized) return;
 
     sf::View worldView = window.getView();
@@ -24,13 +24,17 @@ void HUD::render(sf::RenderWindow& window, float fps, sf::Vector2f cameraPos, fl
    
     drawText(window, "Camera: " + std::to_string(static_cast<int>(cameraPos.x)) + ", "
                                 + std::to_string(static_cast<int>(cameraPos.y)) 
-                                + "Zoom: " + std::to_string(zoom).substr(0, 4), {10.f, 30.f});
+                                + "\n" + "Zoom: " + std::to_string(zoom).substr(0, 4), {10.f, 30.f});
 
-    drawText(window, "Selected: " + selectedTileName, {10.f, 50.f});
+    drawText(window, "Selected: " + selectedTileName, {10.f, 70.f});
 
     if (!hoveredInfo.empty()) {
-        float bottoom = static_cast<float>(window.getSize().y);
-        drawText(window, hoveredInfo, {10.f, bottoom - 30.f});
+        float bottom = static_cast<float>(window.getSize().y);
+        drawText(window, hoveredInfo, {10.f, bottom - 30.f});
+    }
+    if (!selectionInfo.empty()) {
+        float bottom = static_cast<float>(window.getSize().y);
+        drawText(window, selectionInfo, {10.f, bottom - 50.f});
     }
 
     window.setView(worldView);

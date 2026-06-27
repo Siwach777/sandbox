@@ -13,6 +13,9 @@ class World {
 
         std::unordered_map<Entity, Position> positions;
         std::unordered_map<Entity, Renderable> renderables;
+        std::unordered_map<Entity, Velocity> velocities;
+
+        std::unordered_set<Entity> ants;
 
     private:
         Entity m_nextId = 0;

@@ -4,18 +4,23 @@
 #include <string>
 
 Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM")
-             , m_grid(100, 100, 16.f)
+             , m_grid(128, 72, 16.f)
              , m_camera({640.f, 360.f}, {640.f, 360.f}) {
     m_window.setFramerateLimit(static_cast<unsigned int>(TICKS_PER_SECOND));
     if (!m_hud.init("assets/fonts/JetBrainsMono-Bold.ttf")) {
         std::cout << "[ERROR] : Font didnt load" << std::endl;
     }
 
+    // Entity
     for (int i = 0; i < 5; ++i) {
-        Entity e = m_world.createEntity();
-        m_world.positions[e] = {200.f + i * 40.f, 200.f};
-        m_world.renderables[e] = {6.f, sf::Color(200, 80, 80)};
+        EntityFactory::createAnt(m_world, 200.f + i * 40.f, 200.f);
     }
+
+    // for (int i = 0; i < 5; ++i) {
+    //     Entity e = m_world.createEntity();
+    //     m_world.positions[e] = {200.f + i * 40.f, 200.f};
+    //     m_world.renderables[e] = {6.f, sf::Color(200, 80, 80)};
+    // }
 
 }
 
@@ -65,6 +70,11 @@ void Game::update(sf::Time dt) {
         m_camera.move(move); 
     }
 
+    m_camera.constrain({
+        m_grid.getWidth() * m_grid.getTileSize(),
+        m_grid.getHeight() * m_grid.getTileSize()
+    });
+
     sf::Vector2i mousePixel = sf::Mouse::getPosition(m_window);
     m_mouseWorldPos = m_window.mapPixelToCoords(mousePixel, m_camera.getView());
     m_hoveredTile = m_grid.worldToGrid(m_mouseWorldPos);
@@ -100,6 +110,18 @@ void Game::render() {
         highlight.setOutlineThickness(1.f);
         m_window.draw(highlight);
     }
+    if (m_selectedEntity != INVALID_ENTITY && m_world.isAlive(m_selectedEntity) && m_world.positions.count(m_selectedEntity)) {
+        auto& pos = m_world.positions[m_selectedEntity];
+
+        sf::CircleShape ring(8.f);
+        ring.setOrigin({8.f, 8.f});
+        ring.setPosition({pos.x, pos.y});
+        ring.setFillColor(sf::Color::Transparent);
+        ring.setOutlineColor(sf::Color::Yellow);
+        ring.setOutlineThickness(1.f);
+
+        m_window.draw(ring);
+    }
 
     // HUD
     std::string hoveredInfo;
@@ -109,8 +131,21 @@ void Game::render() {
                     + std::to_string(m_hoveredTile.x) + ", "
                     + std::to_string(m_hoveredTile.y) + ")";
     }
+    std::string selectionInfo;
+    if (m_selectedEntity != INVALID_ENTITY && m_world.isAlive(m_selectedEntity)) {
+        if (m_world.ants.count(m_selectedEntity))
+            selectionInfo += "Ant";
+        else 
+            selectionInfo += "Entity";
 
-    m_hud.render(m_window, m_fps, m_camera.getCenter(), m_camera.getZoom(), std::string(tileName(m_selectedTile)), hoveredInfo);
+        if (m_world.positions.count(m_selectedEntity)) {
+            auto& pos = m_world.positions[m_selectedEntity];
+            selectionInfo += " at (" + std::to_string(static_cast<int>(pos.x))
+                           + ", " + std::to_string(static_cast<int>(pos.y)) + ")";
+        }
+    }
+
+    m_hud.render(m_window, m_fps, m_camera.getCenter(), m_camera.getZoom(), std::string(tileName(m_selectedTile)), hoveredInfo, selectionInfo);
 
     m_window.display();
 }
@@ -137,11 +172,22 @@ void Game::processEvents() {
         if (auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>()) {
             float factor = (scroll->delta > 0) ? 0.9f : 1.1f;
             m_camera.zoom(factor);
+            m_camera.constrain({
+                m_grid.getWidth() * m_grid.getTileSize(),
+                m_grid.getHeight() * m_grid.getTileSize()
+            });
         }
         // Mouse Button
         if (auto* pressed = event->getIf<sf::Event::MouseButtonPressed>()) {
             if (pressed->button == sf::Mouse::Button::Left) {
-                m_isPainting = true;
+                Entity found = findEntity(m_mouseWorldPos);
+                if (found != INVALID_ENTITY) {
+                    m_selectedEntity = found;
+                }
+                else {
+                    m_selectedEntity = INVALID_ENTITY;
+                    m_isPainting = true;
+                }
             }
             else if (pressed->button == sf::Mouse::Button::Right) {
                 m_isErasing = true;
@@ -152,4 +198,20 @@ void Game::processEvents() {
             if (released->button == sf::Mouse::Button::Right) { m_isErasing = false; }
         }
     }
+}
+
+Entity Game::findEntity(sf::Vector2f worldPos) {
+    float closestDist = 15.f;
+    Entity closest = INVALID_ENTITY;
+
+    for (auto& [entity, pos] : m_world.positions) {
+        float dx = pos.x - worldPos.x;
+        float dy = pos.y - worldPos.y;
+        float dist = std::sqrt(dx*dx + dy*dy);
+        if (dist < closestDist) {
+            closestDist = dist;
+            closest = entity;
+        }
+    }
+    return closest;
 }

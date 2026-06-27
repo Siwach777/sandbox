@@ -5,6 +5,7 @@
 #include "HUD.hpp"
 #include "ECS/World.hpp"
 #include "Systems/RenderSystem.hpp"
+#include "ECS/EntityFactory.hpp"
 
 class Game {
     public:
@@ -15,6 +16,8 @@ class Game {
         void processEvents();
         void update(sf::Time dt);
         void render();
+
+        Entity findEntity(sf::Vector2f worldPos);
 
         sf::RenderWindow m_window;
         sf::Vector2f m_mouseWorldPos;
@@ -29,6 +32,7 @@ class Game {
         TileType m_selectedTile = TileType::Dirt;
         bool m_isPainting = false;
         bool m_isErasing = false;
+        Entity m_selectedEntity = INVALID_ENTITY;
 
         static constexpr float TICKS_PER_SECOND = 144.f;
         static constexpr sf::Time TIME_PER_TICK = sf::seconds(1.f / TICKS_PER_SECOND);
