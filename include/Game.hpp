@@ -4,8 +4,11 @@
 #include "Camera.hpp"
 #include "HUD.hpp"
 #include "ECS/World.hpp"
-#include "Systems/RenderSystem.hpp"
 #include "ECS/EntityFactory.hpp"
+#include "Systems/MovementSystem.hpp"
+#include "Systems/WanderSystem.hpp"
+#include "Systems/RenderSystem.hpp"
+#include "Random.hpp"
 
 class Game {
     public:

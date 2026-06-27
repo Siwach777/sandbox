@@ -4,7 +4,7 @@
 #include <string>
 
 Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM")
-             , m_grid(128, 72, 16.f)
+             , m_grid(128, 72, 10.f)
              , m_camera({640.f, 360.f}, {640.f, 360.f}) {
     m_window.setFramerateLimit(static_cast<unsigned int>(TICKS_PER_SECOND));
     if (!m_hud.init("assets/fonts/JetBrainsMono-Bold.ttf")) {
@@ -12,16 +12,9 @@ Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM")
     }
 
     // Entity
-    for (int i = 0; i < 5; ++i) {
-        EntityFactory::createAnt(m_world, 200.f + i * 40.f, 200.f);
+    for (int i = 0; i < 25000; ++i) {
+        EntityFactory::createAnt(m_world, Random::getFloat(10.f, 1260.f), Random::getFloat(10.f, 700.f));
     }
-
-    // for (int i = 0; i < 5; ++i) {
-    //     Entity e = m_world.createEntity();
-    //     m_world.positions[e] = {200.f + i * 40.f, 200.f};
-    //     m_world.renderables[e] = {6.f, sf::Color(200, 80, 80)};
-    // }
-
 }
 
 void Game::run() {
@@ -75,6 +68,10 @@ void Game::update(sf::Time dt) {
         m_grid.getHeight() * m_grid.getTileSize()
     });
 
+    Systems::wander(m_world, dt);
+    Systems::movement(m_world, dt, m_grid.getWidth() * m_grid.getTileSize(), m_grid.getHeight() * m_grid.getTileSize());
+
+    // Mouse
     sf::Vector2i mousePixel = sf::Mouse::getPosition(m_window);
     m_mouseWorldPos = m_window.mapPixelToCoords(mousePixel, m_camera.getView());
     m_hoveredTile = m_grid.worldToGrid(m_mouseWorldPos);

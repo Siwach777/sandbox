@@ -16,3 +16,9 @@ struct Velocity {
     float x = 0.f;
     float y = 0.f;
 };
+
+struct Wander {
+    float speed = 50.f;
+    float timer = 0.f;
+    float changeInterval = 1.5f;
+};

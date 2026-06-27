@@ -4,7 +4,7 @@ project(world_sim VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
-set(CMAKE_EXPORT_COMPILE_COMMANDS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_CXX_FLAGS_DEBUG   "-g -O0 -Wall -Wextra -fsanitize=address -Wswitch,undefined")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
@@ -20,6 +20,8 @@ add_executable(world_sim
 	src/ECS/World.cpp
 	src/ECS/EntityFactory.cpp
 	src/Systems/RenderSystem.cpp
+	src/Systems/WanderSystem.cpp
+	src/Systems/MovementSystem.cpp
 )
 
 target_include_directories(world_sim PRIVATE

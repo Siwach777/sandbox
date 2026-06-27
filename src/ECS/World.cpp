@@ -12,6 +12,7 @@ void World::destroyEntity(Entity entity) {
     positions.erase(entity);
     renderables.erase(entity);
     velocities.erase(entity);
+    wanders.erase(entity);
 
     ants.erase(entity);
 }
