@@ -1,10 +1,15 @@
 #include "Game.hpp"
 #include "Grid.hpp"
+#include <iostream>
+#include <string>
 
 Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM")
              , m_grid(100, 100, 16.f)
              , m_camera({640.f, 360.f}, {640.f, 360.f}) {
     m_window.setFramerateLimit(static_cast<unsigned int>(TICKS_PER_SECOND));
+    if (!m_hud.init("assets/fonts/JetBrainsMono-Bold.ttf")) {
+        std::cout << "[ERROR] : Font didnt load" << std::endl;
+    }
 }
 
 void Game::run() {
@@ -31,19 +36,8 @@ void Game::run() {
         fpsTimer += elapsed;
         auto center = m_camera.getCenter();
 
-        if (fpsTimer >= sf::seconds(1.f))
-        {
-            std::string title = "World Sim — " + std::to_string(frameCount) + " FPS";
-            title += " | Tool: " + std::string(tileName(m_selectedTile));
-            if (m_grid.inBounds(m_hoveredTile.x, m_hoveredTile.y))
-            {
-                title += " | Hover: " + std::string(tileName(
-                    m_grid.getTile(m_hoveredTile.x, m_hoveredTile.y)));
-                title += " (" + std::to_string(m_hoveredTile.x)
-                    + "," + std::to_string(m_hoveredTile.y) + ")";
-            }
-            m_window.setTitle(title);
-
+        if (fpsTimer >= sf::seconds(1.f)) {
+            m_fps = static_cast<float>(frameCount); 
             frameCount = 0;
             fpsTimer -= sf::seconds(1.f);
         }
@@ -97,6 +91,16 @@ void Game::render() {
         m_window.draw(highlight);
     }
 
+    std::string hoveredInfo;
+    if (m_grid.inBounds(m_hoveredTile.x, m_hoveredTile.y)) {
+        auto type = m_grid.getTile(m_hoveredTile.x, m_hoveredTile.y);
+        hoveredInfo = std::string(tileName(type)) + " ("
+                    + std::to_string(m_hoveredTile.x) + ", "
+                    + std::to_string(m_hoveredTile.y) + ")";
+    }
+
+    m_hud.render(m_window, m_fps, m_camera.getCenter(), m_camera.getZoom(), std::string(tileName(m_selectedTile)), hoveredInfo);
+
     m_window.display();
 }
 
@@ -126,12 +130,7 @@ void Game::processEvents() {
         // Mouse Button
         if (auto* pressed = event->getIf<sf::Event::MouseButtonPressed>()) {
             if (pressed->button == sf::Mouse::Button::Left) {
-                if (m_grid.inBounds(m_hoveredTile.x, m_hoveredTile.y)) {
-                    m_window.setTitle("Clicked tile: (" +
-                    std::to_string(m_hoveredTile.x) + ", " +
-                    std::to_string(m_hoveredTile.y) + ")");
-                    m_isPainting = true;
-                }
+                m_isPainting = true;
             }
             else if (pressed->button == sf::Mouse::Button::Right) {
                 m_isErasing = true;

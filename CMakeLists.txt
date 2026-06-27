@@ -16,6 +16,7 @@ add_executable(world_sim
 	src/Game.cpp
 	src/Grid.cpp
 	src/Camera.cpp
+	src/HUD.cpp
 )
 
 target_include_directories(world_sim PRIVATE
@@ -28,3 +29,5 @@ target_link_libraries(world_sim PRIVATE
 	SFML::Window
 	SFML::System
 )
+
+file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})

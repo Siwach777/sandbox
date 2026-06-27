@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Grid.hpp"
 #include "Camera.hpp"
+#include "HUD.hpp"
 
 class Game {
     public:
@@ -19,6 +20,8 @@ class Game {
 
         Grid m_grid;
         Camera m_camera;
+        HUD m_hud;
+        float m_fps = 0.f;
 
         TileType m_selectedTile = TileType::Dirt;
         bool m_isPainting = false;
