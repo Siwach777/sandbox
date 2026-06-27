@@ -20,6 +20,10 @@ class Game {
         Grid m_grid;
         Camera m_camera;
 
+        TileType m_selectedTile = TileType::Dirt;
+        bool m_isPainting = false;
+        bool m_isErasing = false;
+
         static constexpr float TICKS_PER_SECOND = 144.f;
         static constexpr sf::Time TIME_PER_TICK = sf::seconds(1.f / TICKS_PER_SECOND);
 };

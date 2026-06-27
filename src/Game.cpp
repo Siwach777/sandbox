@@ -62,6 +62,13 @@ void Game::update(sf::Time dt) {
     m_mouseWorldPos = m_window.mapPixelToCoords(mousePixel, m_camera.getView());
     m_hoveredTile = m_grid.worldToGrid(m_mouseWorldPos);
 
+    if (m_isPainting && m_grid.inBounds(m_hoveredTile.x, m_hoveredTile.y)) {
+        m_grid.setTile(m_hoveredTile.x, m_hoveredTile.y, m_selectedTile);        
+    }
+    if (m_isErasing &&m_grid.inBounds(m_hoveredTile.x, m_hoveredTile.y)) {
+        m_grid.setTile(m_hoveredTile.x, m_hoveredTile.y, TileType::Dirt);        
+    }
+
 }
 
 void Game::render() {
@@ -97,6 +104,11 @@ void Game::processEvents() {
             if (key->code == sf::Keyboard::Key::Escape) {
                 m_window.close();
             }
+            if (key->code == sf::Keyboard::Key::Num1) { m_selectedTile = TileType::Dirt; }
+            if (key->code == sf::Keyboard::Key::Num2) { m_selectedTile = TileType::Stone; }
+            if (key->code == sf::Keyboard::Key::Num3) { m_selectedTile = TileType::Sand; }
+            if (key->code == sf::Keyboard::Key::Num4) { m_selectedTile = TileType::Water; }
+
         }
         // Mouse Scroll
         if (auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>()) {
@@ -110,8 +122,16 @@ void Game::processEvents() {
                     m_window.setTitle("Clicked tile: (" +
                     std::to_string(m_hoveredTile.x) + ", " +
                     std::to_string(m_hoveredTile.y) + ")");
+                    m_isPainting = true;
                 }
             }
+            else if (pressed->button == sf::Mouse::Button::Right) {
+                m_isErasing = true;
+            }
+        }
+        if (auto* released = event->getIf<sf::Event::MouseButtonReleased>()) {
+            if (released->button == sf::Mouse::Button::Left) { m_isPainting = false; }
+            if (released->button == sf::Mouse::Button::Right) { m_isErasing = false; }
         }
     }
 }
