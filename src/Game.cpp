@@ -10,6 +10,13 @@ Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM")
     if (!m_hud.init("assets/fonts/JetBrainsMono-Bold.ttf")) {
         std::cout << "[ERROR] : Font didnt load" << std::endl;
     }
+
+    for (int i = 0; i < 5; ++i) {
+        Entity e = m_world.createEntity();
+        m_world.positions[e] = {200.f + i * 40.f, 200.f};
+        m_world.renderables[e] = {6.f, sf::Color(200, 80, 80)};
+    }
+
 }
 
 void Game::run() {
@@ -77,6 +84,9 @@ void Game::render() {
     m_window.setView(m_camera.getView());
     m_grid.render(m_window);
 
+    // ECS
+    Systems::render(m_world, m_window);
+
     // Mouse Highlight
     if (m_grid.inBounds(m_hoveredTile.x, m_hoveredTile.y)) {
         float ts = m_grid.getTileSize();
@@ -91,6 +101,7 @@ void Game::render() {
         m_window.draw(highlight);
     }
 
+    // HUD
     std::string hoveredInfo;
     if (m_grid.inBounds(m_hoveredTile.x, m_hoveredTile.y)) {
         auto type = m_grid.getTile(m_hoveredTile.x, m_hoveredTile.y);

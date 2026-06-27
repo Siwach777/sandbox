@@ -3,6 +3,8 @@
 #include "Grid.hpp"
 #include "Camera.hpp"
 #include "HUD.hpp"
+#include "ECS/World.hpp"
+#include "Systems/RenderSystem.hpp"
 
 class Game {
     public:
@@ -21,6 +23,7 @@ class Game {
         Grid m_grid;
         Camera m_camera;
         HUD m_hud;
+        World m_world;
         float m_fps = 0.f;
 
         TileType m_selectedTile = TileType::Dirt;
