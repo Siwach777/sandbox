@@ -33,10 +33,16 @@ void Game::run() {
 
         if (fpsTimer >= sf::seconds(1.f))
         {
-            m_window.setTitle("World Sim — " + std::to_string(frameCount) + " FPS"
-                + " | Pos: " + std::to_string(static_cast<int>(center.x))
-                + "," + std::to_string(static_cast<int>(center.y))
-                + " | Zoom: " + std::to_string(m_camera.getZoom()).substr(0, 4));
+            std::string title = "World Sim — " + std::to_string(frameCount) + " FPS";
+            title += " | Tool: " + std::string(tileName(m_selectedTile));
+            if (m_grid.inBounds(m_hoveredTile.x, m_hoveredTile.y))
+            {
+                title += " | Hover: " + std::string(tileName(
+                    m_grid.getTile(m_hoveredTile.x, m_hoveredTile.y)));
+                title += " (" + std::to_string(m_hoveredTile.x)
+                    + "," + std::to_string(m_hoveredTile.y) + ")";
+            }
+            m_window.setTitle(title);
 
             frameCount = 0;
             fpsTimer -= sf::seconds(1.f);
@@ -108,6 +114,8 @@ void Game::processEvents() {
             if (key->code == sf::Keyboard::Key::Num2) { m_selectedTile = TileType::Stone; }
             if (key->code == sf::Keyboard::Key::Num3) { m_selectedTile = TileType::Sand; }
             if (key->code == sf::Keyboard::Key::Num4) { m_selectedTile = TileType::Water; }
+            if (key->code == sf::Keyboard::Key::Num5) { m_selectedTile = TileType::Grass; }
+            if (key->code == sf::Keyboard::Key::Num6) { m_selectedTile = TileType::Wall; }
 
         }
         // Mouse Scroll

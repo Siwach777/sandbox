@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS OFF)
 
-set(CMAKE_CXX_FLAGS_DEBUG   "-g -O0 -Wall -Wextra -fsanitize=address,undefined")
+set(CMAKE_CXX_FLAGS_DEBUG   "-g -O0 -Wall -Wextra -fsanitize=address -Wswitch,undefined")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
@@ -20,6 +20,7 @@ add_executable(world_sim
 
 target_include_directories(world_sim PRIVATE
     include
+	src
 )
 
 target_link_libraries(world_sim PRIVATE
