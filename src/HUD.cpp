@@ -13,8 +13,9 @@ void HUD::drawText(sf::RenderWindow& window, const std::string&str, sf::Vector2f
     window.draw(text);
 }
 
-void HUD::render(sf::RenderWindow& window, float fps, sf::Vector2f cameraPos, float zoom, const std::string& selectedTileName, const std::string& hoveredInfo, const std::string& selectionInfo) {
+void HUD::render(sf::RenderWindow& window, float fps, sf::Vector2f cameraPos, float zoom, const std::string& selectedTileName, const std::string& hoveredInfo, const std::string& selectionInfo, const std::string& toolInfo) {
     if (!m_initialized) return;
+    float bottom = static_cast<float>(window.getSize().y);
 
     sf::View worldView = window.getView();
     sf::View screenView(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize())));
@@ -29,12 +30,13 @@ void HUD::render(sf::RenderWindow& window, float fps, sf::Vector2f cameraPos, fl
     drawText(window, "Selected: " + selectedTileName, {10.f, 70.f});
 
     if (!hoveredInfo.empty()) {
-        float bottom = static_cast<float>(window.getSize().y);
         drawText(window, hoveredInfo, {10.f, bottom - 30.f});
     }
     if (!selectionInfo.empty()) {
-        float bottom = static_cast<float>(window.getSize().y);
-        drawText(window, selectionInfo, {10.f, bottom - 50.f});
+        drawText(window, selectionInfo, {10.f, bottom - 70.f});
+    }
+    if (!toolInfo.empty()) {
+        drawText(window, toolInfo, {10.f, bottom - 50.f});
     }
 
     window.setView(worldView);

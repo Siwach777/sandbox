@@ -10,6 +10,8 @@
 #include "Systems/RenderSystem.hpp"
 #include "Random.hpp"
 
+enum class ToolMode { TilePaint, FoodPlace };
+
 class Game {
     public:
         Game();
@@ -36,7 +38,16 @@ class Game {
         bool m_isPainting = false;
         bool m_isErasing = false;
         Entity m_selectedEntity = INVALID_ENTITY;
+        ToolMode m_toolMode = ToolMode::TilePaint;
 
         static constexpr float TICKS_PER_SECOND = 144.f;
         static constexpr sf::Time TIME_PER_TICK = sf::seconds(1.f / TICKS_PER_SECOND);
 };
+
+inline const char* toolMode(ToolMode mode) {
+    switch(mode) {
+        case ToolMode::TilePaint: return "Tile Painting";
+        case ToolMode::FoodPlace: return "Food Placement";
+        default                 : return "Unknown";
+    }
+}

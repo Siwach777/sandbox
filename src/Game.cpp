@@ -12,7 +12,7 @@ Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM")
     }
 
     // Entity
-    for (int i = 0; i < 2500; ++i) {
+    for (int i = 0; i < 50; ++i) {
         Entity e = EntityFactory::createAnt(m_world, Random::getFloat(10.f, 1260.f), Random::getFloat(10.f, 700.f));
         auto& wander = m_world.wanders[e];
         wander.speed *= Random::getFloat(0.8f, 1.2f);
@@ -61,6 +61,9 @@ void Game::update(sf::Time dt) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) { move.x -= speed; }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) { move.y += speed; }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) { move.x += speed; }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::T)) { m_toolMode = ToolMode::TilePaint; }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) { m_toolMode = ToolMode::FoodPlace; }
 
     if (move.x != 0.f || move.y != 0.f) { 
         m_camera.move(move); 
@@ -135,6 +138,8 @@ void Game::render() {
     if (m_selectedEntity != INVALID_ENTITY && m_world.isAlive(m_selectedEntity)) {
         if (m_world.ants.count(m_selectedEntity))
             selectionInfo += "Ant";
+        if (m_world.foods.count(m_selectedEntity))
+            selectionInfo += "Food" /*+ std::to_string((m_world.foodAmounts[m_selectedEntity]))*/;
         else 
             selectionInfo += "Entity";
 
@@ -144,8 +149,9 @@ void Game::render() {
                            + ", " + std::to_string(static_cast<int>(pos.y)) + ")";
         }
     }
+    std::string toolInfo = "Tool Mode : " + std::string(toolMode(m_toolMode));
 
-    m_hud.render(m_window, m_fps, m_camera.getCenter(), m_camera.getZoom(), std::string(tileName(m_selectedTile)), hoveredInfo, selectionInfo);
+    m_hud.render(m_window, m_fps, m_camera.getCenter(), m_camera.getZoom(), std::string(tileName(m_selectedTile)), hoveredInfo, selectionInfo, toolInfo);
 
     m_window.display();
 }
@@ -180,13 +186,17 @@ void Game::processEvents() {
         // Mouse Button
         if (auto* pressed = event->getIf<sf::Event::MouseButtonPressed>()) {
             if (pressed->button == sf::Mouse::Button::Left) {
-                Entity found = findEntity(m_mouseWorldPos);
-                if (found != INVALID_ENTITY) {
-                    m_selectedEntity = found;
-                }
-                else {
-                    m_selectedEntity = INVALID_ENTITY;
-                    m_isPainting = true;
+                if (m_toolMode == ToolMode::TilePaint) {
+                    Entity found = findEntity(m_mouseWorldPos);
+                    if (found != INVALID_ENTITY) {
+                        m_selectedEntity = found;
+                    }
+                    else {
+                        m_selectedEntity = INVALID_ENTITY;
+                        m_isPainting = true;
+                    }
+                } else if (m_toolMode == ToolMode::FoodPlace) {
+                    EntityFactory::createFood(m_world, m_mouseWorldPos.x, m_mouseWorldPos.y);
                 }
             }
             else if (pressed->button == sf::Mouse::Button::Right) {

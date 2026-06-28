@@ -13,8 +13,10 @@ void World::destroyEntity(Entity entity) {
     renderables.erase(entity);
     velocities.erase(entity);
     wanders.erase(entity);
+    foodAmounts.erase(entity);
 
     ants.erase(entity);
+    foods.erase(entity);
 }
 
 bool World::isAlive(Entity entity) {

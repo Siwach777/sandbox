@@ -12,7 +12,8 @@ class HUD {
                     float zoom,
                     const std::string& selectedTileName,
                     const std::string& hoveredInfo,
-                    const std::string& selectionInfo);
+                    const std::string& selectionInfo,
+                    const std::string& tooInfo);
 
     private:
             sf::Font m_font;

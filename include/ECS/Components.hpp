@@ -22,3 +22,9 @@ struct Wander {
     float timer = 0.f;
     float changeInterval = 1.5f;
 };
+
+struct Food {};
+
+struct foodAmount {
+    int amount = 100;
+};
