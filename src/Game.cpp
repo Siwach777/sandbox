@@ -12,12 +12,21 @@ Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM")
     }
 
     // Entity
+
+    Entity nestEntity = EntityFactory::createNest(m_world, 200.f, 200.f);
+    auto& nestPos = m_world.positions[nestEntity];
+    float offset = Random::getFloat(-30.f, +30.f);
+
     for (int i = 0; i < 50; ++i) {
-        Entity e = EntityFactory::createAnt(m_world, Random::getFloat(10.f, 1260.f), Random::getFloat(10.f, 700.f));
+        float ax = nestPos.x + offset;
+        float ay = nestPos.y + offset;
+        Entity e = EntityFactory::createAnt(m_world, ax, ay);
+        m_world.belongToNests[e] = {nestEntity}; 
         auto& wander = m_world.wanders[e];
         wander.speed *= Random::getFloat(0.8f, 1.2f);
         wander.changeInterval *= Random::getFloat(0.5f, 1.5f);
     }
+
 }
 
 void Game::run() {

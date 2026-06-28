@@ -19,4 +19,12 @@ namespace EntityFactory {
         world.foods.insert(e);
         return e;
     }
+
+    Entity createNest(World& world, float x, float y) {
+        Entity e = world.createEntity();
+        world.positions[e] = {x, y};
+        world.renderables[e] = {15.f, sf::Color(160, 100, 50)};
+
+        return e;
+    }
 }

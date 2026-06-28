@@ -28,3 +28,9 @@ struct Food {};
 struct foodAmount {
     int amount = 100;
 };
+
+struct Nest {};
+
+struct BelongsToNest {
+    Entity nest = INVALID_ENTITY;
+};
