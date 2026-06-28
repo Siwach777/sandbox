@@ -17,6 +17,7 @@ class World {
         std::unordered_map<Entity, Wander> wanders;
         std::unordered_map<Entity, foodAmount> foodAmounts;
         std::unordered_map<Entity, BelongsToNest> belongToNests;
+        std::unordered_map<Entity, AntBehavior> antBehaviors;
 
         std::unordered_set<Entity> ants;
         std::unordered_set<Entity> foods;

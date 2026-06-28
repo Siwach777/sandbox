@@ -22,6 +22,7 @@ add_executable(world_sim
 	src/Systems/RenderSystem.cpp
 	src/Systems/WanderSystem.cpp
 	src/Systems/MovementSystem.cpp
+	src/Systems/BehaviorSystem.cpp
 )
 
 target_include_directories(world_sim PRIVATE

@@ -34,3 +34,14 @@ struct Nest {};
 struct BelongsToNest {
     Entity nest = INVALID_ENTITY;
 };
+
+enum class AntState {
+    Idle,
+    Foraging,
+    Returning
+};
+
+struct AntBehavior {
+    AntState state = AntState::Idle;
+    float stateTimer = 0.f;
+};

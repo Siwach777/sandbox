@@ -13,17 +13,16 @@ Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM")
 
     // Entity
 
-    Entity nestEntity = EntityFactory::createNest(m_world, 200.f, 200.f);
+    Entity nestEntity = EntityFactory::createNest(m_world, 640.f, 300.f);
     auto& nestPos = m_world.positions[nestEntity];
-    float offset = Random::getFloat(-30.f, +30.f);
 
-    for (int i = 0; i < 50; ++i) {
-        float ax = nestPos.x + offset;
-        float ay = nestPos.y + offset;
+    for (int i = 0; i < 500; ++i) {
+        float ax = nestPos.x + Random::getFloat(-30.f, +30.f);
+        float ay = nestPos.y + Random::getFloat(-30.f, +30.f);
         Entity e = EntityFactory::createAnt(m_world, ax, ay);
         m_world.belongToNests[e] = {nestEntity}; 
         auto& wander = m_world.wanders[e];
-        wander.speed *= Random::getFloat(0.8f, 1.2f);
+        wander.speed *= Random::getFloat(-1.2f, 1.2f);
         wander.changeInterval *= Random::getFloat(0.5f, 1.5f);
     }
 
@@ -83,6 +82,7 @@ void Game::update(sf::Time dt) {
         m_grid.getHeight() * m_grid.getTileSize()
     });
 
+    Systems::behavior(m_world, dt);
     Systems::wander(m_world, dt);
     Systems::movement(m_world, dt, m_grid.getWidth() * m_grid.getTileSize(), m_grid.getHeight() * m_grid.getTileSize());
 

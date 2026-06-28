@@ -15,6 +15,7 @@ void World::destroyEntity(Entity entity) {
     wanders.erase(entity);
     foodAmounts.erase(entity);
     belongToNests.erase(entity);
+    antBehaviors.erase(entity);
 
     ants.erase(entity);
     foods.erase(entity);

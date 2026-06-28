@@ -6,6 +6,13 @@ namespace Systems {
     void wander(World& world, sf::Time dt) {
         for (auto& [entity, wander] : world.wanders) {
             if (world.velocities.count(entity) == 0) { continue; }
+
+            if (world.antBehaviors.count(entity) > 0) {
+                if (world.antBehaviors[entity].state != AntState::Foraging) {
+                    continue;
+                }
+            }
+
             auto& vel = world.velocities[entity];
             
             wander.timer -= dt.asSeconds();
