@@ -1,9 +1,12 @@
 #include "Systems/InteractionSystem.hpp"
 #include "ECS/World.hpp"
 #include <algorithm>
+#include <vector>
 
 namespace Systems {
     void interaction(World &world) {
+        std::vector<Entity> toDestroy;
+
         for (Entity antEntity : world.ants) {
             if (!world.isAlive(antEntity) || world.positions.count(antEntity) == 0 || world.antBehaviors.count(antEntity) == 0) {
                 continue;
@@ -39,10 +42,15 @@ namespace Systems {
                     behavior.stateTimer = 0.f;
 
                     if (foodAmount.amount <= 0) {
-                        world.destroyEntity(foodEntity);
+                        toDestroy.push_back(foodEntity);
                     }
                     break;
                 }
+            }
+        }
+        for (Entity food : toDestroy) {
+            if (world.isAlive(food)) {
+                world.destroyEntity(food);
             }
         }
     }
