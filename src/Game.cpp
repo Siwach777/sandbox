@@ -6,6 +6,7 @@
 #include "Systems/RenderSystem.hpp"
 #include "Systems/BehaviorSystem.hpp"
 #include "Systems/InteractionSystem.hpp"
+#include "UI/DebugPanel.hpp"
 #include "Random.hpp"
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
@@ -17,6 +18,8 @@
 #include <optional>
 #include <iostream>
 #include <string>
+#include <imgui.h>
+#include <imgui-SFML.h>
 
 Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM")
              , m_grid(128, 72, 10.f)
@@ -24,6 +27,9 @@ Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM")
     m_window.setFramerateLimit(static_cast<unsigned int>(TICKS_PER_SECOND));
     if (!m_hud.init("assets/fonts/JetBrainsMono-Bold.ttf")) {
         std::cout << "[ERROR] : Font didnt load" << std::endl;
+    }
+    if (!ImGui::SFML::Init(m_window)) {
+        std::cout << "[ERROR] : ImGui didnt load" << std::endl;
     }
 
     // Entity
@@ -60,6 +66,10 @@ void Game::run() {
             update(TIME_PER_TICK);
             accumulator -= TIME_PER_TICK;
         }
+        ImGui::SFML::Update(m_window, elapsed);
+        DebugPanel::showStats(m_fps, static_cast<int>(m_world.ants.size()), static_cast<int>(m_world.foods.size()), m_camera.getCenter(), m_camera.getZoom());
+        DebugPanel::showEntityList(m_world, m_selectedEntity);
+        DebugPanel::showInspector(m_world, m_selectedEntity);
 
         render();
 
@@ -73,6 +83,7 @@ void Game::run() {
             fpsTimer -= sf::seconds(1.f);
         }
     }
+    ImGui::SFML::Shutdown();
 }
 
 void Game::update(sf::Time dt) {
@@ -198,6 +209,8 @@ void Game::render() {
 
     m_hud.render(m_window, hudData);
 
+    ImGui::SFML::Render(m_window);
+
     m_window.display();
 }
 
@@ -206,6 +219,10 @@ void Game::processEvents() {
         if (event->is<sf::Event::Closed>()) {
             m_window.close();
         }
+
+        // ImGui
+        ImGui::SFML::ProcessEvent(m_window, *event);
+
         // Keyboard
         if (auto* key = event->getIf<sf::Event::KeyPressed>()) {
             if (key->code == sf::Keyboard::Key::Escape) {
@@ -228,6 +245,10 @@ void Game::processEvents() {
                 m_grid.getHeight() * m_grid.getTileSize()
             });
         }
+
+        if (ImGui::GetIO().WantCaptureMouse)
+            continue;
+
         // Mouse Button
         if (auto* pressed = event->getIf<sf::Event::MouseButtonPressed>()) {
             if (pressed->button == sf::Mouse::Button::Left) {

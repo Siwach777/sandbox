@@ -11,6 +11,27 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
 
+include(FetchContent)
+
+FetchContent_Declare(
+	imgui
+	GIT_REPOSITORY https://github.com/ocornut/imgui.git
+	GIT_TAG v1.91.8
+	GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(imgui)
+
+set(IMGUI_DIR ${imgui_SOURCE_DIR})
+set(IMGUI_SFML_FIND_SFML OFF CACHE BOOL "" FORCE)
+
+FetchContent_Declare(
+	imgui-SFML
+	GIT_REPOSITORY https://github.com/SFML/imgui-sfml.git
+	GIT_TAG v3.0
+	GIT_SHALLOW TRUE 
+)
+FetchContent_MakeAvailable(imgui-sfml)
+
 add_executable(world_sim
 	src/main.cpp
 	src/Game.cpp
@@ -24,6 +45,7 @@ add_executable(world_sim
 	src/Systems/MovementSystem.cpp
 	src/Systems/BehaviorSystem.cpp
 	src/Systems/InteractionSystem.cpp
+	src/UI/DebugPanel.cpp
 )
 
 target_include_directories(world_sim PRIVATE
@@ -35,6 +57,7 @@ target_link_libraries(world_sim PRIVATE
 	SFML::Graphics
 	SFML::Window
 	SFML::System
+	ImGui-SFML::ImGui-SFML
 )
 
 file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})
