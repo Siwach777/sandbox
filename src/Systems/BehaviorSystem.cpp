@@ -1,5 +1,6 @@
 #include "Systems/BehaviorSystem.hpp"
 #include "ECS/World.hpp"
+#include "Config.hpp"
 #include <cmath>
 
 namespace Systems {
@@ -37,11 +38,11 @@ namespace Systems {
                         float dy = nestPos.y - antPos.y;
                         float dist = std::sqrt(dx*dx + dy*dy);
 
-                        if (dist < 10.f) {
+                        if (dist < config.foodDist) {
                             behavior.state = AntState::Idle;
                             behavior.stateTimer = 0.f;
                         } else {
-                            float speed = 50.f;
+                            float speed = config.speed;
                             vel.x = (dx / dist) * speed;
                             vel.y = (dy / dist) * speed;
                         }

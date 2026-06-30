@@ -8,4 +8,5 @@ namespace DebugPanel {
     void showStats(float fps, int antCount, int foodCount, sf::Vector2f cameraPos, float zoom);
     void showEntityList(World& world, Entity& selectedEntity);
     void showInspector(World& world, Entity& selectedEntity);
+    void showControls();
 }

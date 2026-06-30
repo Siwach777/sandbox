@@ -26,7 +26,7 @@ namespace EntityFactory {
         Entity e = world.createEntity();
         world.positions[e] = {x, y};
         world.renderables[e] = {15.f, sf::Color(160, 100, 50)};
-
+        world.nests.insert(e);
         return e;
     }
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Entity.hpp"
+#include "Config.hpp"
 
 struct Position {
     float x = 0.f;
@@ -18,9 +19,9 @@ struct Velocity {
 };
 
 struct Wander {
-    float speed = 50.f;
+    float speed = config.speed;
     float timer = 0.f;
-    float changeInterval = 1.5f;
+    float changeInterval = config.changeInterval;
 };
 
 struct Food {};

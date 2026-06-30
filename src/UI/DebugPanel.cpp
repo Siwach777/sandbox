@@ -1,5 +1,6 @@
 #include "UI/DebugPanel.hpp"
 #include "ECS/World.hpp"
+#include "Config.hpp"
 #include <imgui.h>
 #include <imgui-SFML.h>
 
@@ -50,6 +51,37 @@ void DebugPanel::showInspector(World& world, Entity& entity) {
     if (world.carryings.count(entity)) {
         auto& carrying = world.carryings[entity];
         ImGui::Text("Carrying: %d food", carrying.amount);
+    }
+
+    ImGui::End();
+}
+
+void DebugPanel::showControls() {
+    ImGui::Begin("Controls");
+
+    ImGui::Checkbox("Pause Simulation", &config.paused);
+    ImGui::Separator();
+
+    ImGui::Text("Movement");
+    ImGui::SliderFloat("Base Speed", &config.speed, 10.f, 500.f);
+    ImGui::SliderFloat("Wander Interval", &config.wanderInterval, 0.1f, 5.0f);
+
+    ImGui::Separator();
+    ImGui::Text("Interaction");
+    ImGui::SliderFloat("Nest Distance threshold", &config.foodDist, 1.f, 50.f);
+    ImGui::SliderFloat("Food Pickup Range", &config.foodPickupRange, 1.f, 50.f);
+    ImGui::SliderInt("Food Pickup Amount", &config.foodPickupAmount, 1, 100);
+
+    ImGui::Separator();
+    ImGui::Text("Spawning");
+    ImGui::SliderInt("Spawn Count", &config.spawnCount, 1, 100);
+    
+    if (ImGui::Button("Spawn Ants")) {
+        config.spawnAntsRequested = true;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Spawn Food")) {
+        config.spawnFoodRequested = true;
     }
 
     ImGui::End();

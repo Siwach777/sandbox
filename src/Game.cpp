@@ -7,6 +7,7 @@
 #include "Systems/BehaviorSystem.hpp"
 #include "Systems/InteractionSystem.hpp"
 #include "UI/DebugPanel.hpp"
+#include "Config.hpp"
 #include "Random.hpp"
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
@@ -70,6 +71,7 @@ void Game::run() {
         DebugPanel::showStats(m_fps, static_cast<int>(m_world.ants.size()), static_cast<int>(m_world.foods.size()), m_camera.getCenter(), m_camera.getZoom());
         DebugPanel::showEntityList(m_world, m_selectedEntity);
         DebugPanel::showInspector(m_world, m_selectedEntity);
+        DebugPanel::showControls();
 
         render();
 
@@ -108,10 +110,49 @@ void Game::update(sf::Time dt) {
         m_grid.getHeight() * m_grid.getTileSize()
     });
 
-    Systems::interaction(m_world);
-    Systems::behavior(m_world, dt);
-    Systems::wander(m_world, dt);
-    Systems::movement(m_world, dt, m_grid.getWidth() * m_grid.getTileSize(), m_grid.getHeight() * m_grid.getTileSize());
+    // Handle Spawning Requests from ImGui
+    if (config.spawnAntsRequested) {
+        Entity nestEntity = INVALID_ENTITY;
+        if (!m_world.nests.empty()) {
+            nestEntity = *m_world.nests.begin();
+        }
+        if (nestEntity != INVALID_ENTITY) {
+            auto& nestPos = m_world.positions[nestEntity];
+            for (int i = 0; i < config.spawnCount; ++i) {
+                float ax = nestPos.x + Random::getFloat(-30.f, +30.f);
+                float ay = nestPos.y + Random::getFloat(-30.f, +30.f);
+                Entity e = EntityFactory::createAnt(m_world, ax, ay);
+                m_world.belongToNests[e] = {nestEntity};
+                auto& wander = m_world.wanders[e];
+                wander.speed = config.speed * Random::getFloat(0.8f, 1.2f);
+                wander.changeInterval = config.wanderInterval * Random::getFloat(0.8f, 1.2f);
+            }
+        }
+        config.spawnAntsRequested = false;
+    }
+
+    if (config.spawnFoodRequested) {
+        sf::Vector2f center = m_camera.getCenter();
+        for (int i = 0; i < config.spawnCount; ++i) {
+            float fx = center.x + Random::getFloat(-100.f, +100.f);
+            float fy = center.y + Random::getFloat(-100.f, +100.f);
+            EntityFactory::createFood(m_world, fx, fy);
+        }
+        config.spawnFoodRequested = false;
+    }
+
+    // Propagate config changes to existing ants
+    for (auto& [entity, wander] : m_world.wanders) {
+        wander.speed = config.speed;
+        wander.changeInterval = config.wanderInterval;
+    }
+
+    if (!config.paused) {
+        Systems::interaction(m_world);
+        Systems::behavior(m_world, dt);
+        Systems::wander(m_world, dt);
+        Systems::movement(m_world, dt, m_grid.getWidth() * m_grid.getTileSize(), m_grid.getHeight() * m_grid.getTileSize());
+    }
 
     
 
@@ -126,7 +167,6 @@ void Game::update(sf::Time dt) {
     if (m_isErasing &&m_grid.inBounds(m_hoveredTile.x, m_hoveredTile.y)) {
         m_grid.setTile(m_hoveredTile.x, m_hoveredTile.y, TileType::Dirt);        
     }
-
 }
 
 void Game::render() {

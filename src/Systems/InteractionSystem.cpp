@@ -1,5 +1,6 @@
 #include "Systems/InteractionSystem.hpp"
 #include "ECS/World.hpp"
+#include "Config.hpp"
 #include <algorithm>
 #include <vector>
 
@@ -27,9 +28,9 @@ namespace Systems {
                 float dy = antPos.y - foodPos.y;
                 float dist = dx*dx + dy*dy;
 
-                float pickupRange = 10.f;
+                float pickupRange = config.foodPickupRange;
                 if (dist < pickupRange * pickupRange) {
-                    int pickup = std::min(10, foodAmount.amount);
+                    int pickup = std::min(config.foodPickupAmount, foodAmount.amount);
                     foodAmount.amount -= pickup;
 
                     if (world.carryings.count(antEntity) == 0) {
