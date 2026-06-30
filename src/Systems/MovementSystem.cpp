@@ -1,6 +1,6 @@
 #include "Systems/MovementSystem.hpp"
 #include "ECS/World.hpp"
-#include "algorithm"
+#include <algorithm>
 
 namespace Systems {
     void movement(World& world, sf::Time dt, float worldWidth, float worldHeight) {

@@ -4,12 +4,6 @@
 #include "Camera.hpp"
 #include "HUD.hpp"
 #include "ECS/World.hpp"
-#include "ECS/EntityFactory.hpp"
-#include "Systems/MovementSystem.hpp"
-#include "Systems/WanderSystem.hpp"
-#include "Systems/RenderSystem.hpp"
-#include "Systems/BehaviorSystem.hpp"
-#include "Random.hpp"
 
 enum class ToolMode { TilePaint, FoodPlace };
 

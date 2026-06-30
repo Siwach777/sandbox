@@ -1,4 +1,6 @@
 #include "Systems/BehaviorSystem.hpp"
+#include "ECS/World.hpp"
+#include <cmath>
 
 namespace Systems {
     void behavior(World& world, sf::Time dt) {

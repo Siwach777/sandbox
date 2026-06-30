@@ -1,5 +1,20 @@
 #include "Game.hpp"
 #include "Grid.hpp"
+#include "ECS/EntityFactory.hpp"
+#include "Systems/MovementSystem.hpp"
+#include "Systems/WanderSystem.hpp"
+#include "Systems/RenderSystem.hpp"
+#include "Systems/BehaviorSystem.hpp"
+#include "Systems/InteractionSystem.hpp"
+#include "Random.hpp"
+#include <SFML/System/Clock.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Mouse.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <cmath>
+#include <optional>
 #include <iostream>
 #include <string>
 
@@ -16,7 +31,7 @@ Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM")
     Entity nestEntity = EntityFactory::createNest(m_world, 640.f, 300.f);
     auto& nestPos = m_world.positions[nestEntity];
 
-    for (int i = 0; i < 500; ++i) {
+    for (int i = 0; i < 50; ++i) {
         float ax = nestPos.x + Random::getFloat(-30.f, +30.f);
         float ay = nestPos.y + Random::getFloat(-30.f, +30.f);
         Entity e = EntityFactory::createAnt(m_world, ax, ay);
@@ -82,9 +97,12 @@ void Game::update(sf::Time dt) {
         m_grid.getHeight() * m_grid.getTileSize()
     });
 
+    Systems::interaction(m_world);
     Systems::behavior(m_world, dt);
     Systems::wander(m_world, dt);
     Systems::movement(m_world, dt, m_grid.getWidth() * m_grid.getTileSize(), m_grid.getHeight() * m_grid.getTileSize());
+
+    
 
     // Mouse
     sf::Vector2i mousePixel = sf::Mouse::getPosition(m_window);
@@ -125,8 +143,8 @@ void Game::render() {
     if (m_selectedEntity != INVALID_ENTITY && m_world.isAlive(m_selectedEntity) && m_world.positions.count(m_selectedEntity)) {
         auto& pos = m_world.positions[m_selectedEntity];
 
-        sf::CircleShape ring(8.f);
-        ring.setOrigin({8.f, 8.f});
+        sf::CircleShape ring(4.f);
+        ring.setOrigin({4.f, 4.f});
         ring.setPosition({pos.x, pos.y});
         ring.setFillColor(sf::Color::Transparent);
         ring.setOutlineColor(sf::Color::Yellow);
@@ -145,10 +163,17 @@ void Game::render() {
     }
     std::string selectionInfo;
     if (m_selectedEntity != INVALID_ENTITY && m_world.isAlive(m_selectedEntity)) {
-        if (m_world.ants.count(m_selectedEntity))
+        if (m_world.ants.count(m_selectedEntity)) {
             selectionInfo += "Ant";
+            auto& behavior = m_world.antBehaviors[m_selectedEntity];
+            switch (behavior.state) {
+                case AntState::Idle:      selectionInfo += " (Idle) ";      break;
+                case AntState::Foraging:  selectionInfo += " (Foraging) ";  break;
+                case AntState::Returning: selectionInfo += " (Returning) "; break;
+            }
+        }
         if (m_world.foods.count(m_selectedEntity))
-            selectionInfo += "Food" /*+ std::to_string((m_world.foodAmounts[m_selectedEntity]))*/;
+            selectionInfo += "Food (" + std::to_string((m_world.foodAmounts[m_selectedEntity].amount)) + ") ";
         else 
             selectionInfo += "Entity";
 
@@ -160,7 +185,18 @@ void Game::render() {
     }
     std::string toolInfo = "Tool Mode : " + std::string(toolMode(m_toolMode));
 
-    m_hud.render(m_window, m_fps, m_camera.getCenter(), m_camera.getZoom(), std::string(tileName(m_selectedTile)), hoveredInfo, selectionInfo, toolInfo);
+    HUDData hudData {
+        .fps = m_fps,
+        .cameraPos = m_camera.getCenter(),
+        .zoom = m_camera.getZoom(),
+        .selectedTileName = tileName(m_selectedTile),
+        .hoveredInfo = hoveredInfo,
+        .selectionInfo = selectionInfo,
+        .toolInfo = toolInfo/*,
+        .stateName = stateInfo*/
+    };
+
+    m_hud.render(m_window, hudData);
 
     m_window.display();
 }

@@ -35,6 +35,10 @@ struct BelongsToNest {
     Entity nest = INVALID_ENTITY;
 };
 
+struct Carrying {
+    int amount = 0;
+};
+
 enum class AntState {
     Idle,
     Foraging,

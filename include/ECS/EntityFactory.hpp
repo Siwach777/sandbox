@@ -1,5 +1,7 @@
 #pragma once
-#include "World.hpp"
+#include "Entity.hpp"
+
+class World;
 
 namespace EntityFactory {
     Entity createAnt(World& world, float x, float y);

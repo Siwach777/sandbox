@@ -1,6 +1,7 @@
 #include "Systems/WanderSystem.hpp"
 #include "ECS/World.hpp"
 #include "Random.hpp"
+#include <cmath>
 
 namespace Systems {
     void wander(World& world, sf::Time dt) {

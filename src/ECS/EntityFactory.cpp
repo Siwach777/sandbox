@@ -1,4 +1,5 @@
 #include "ECS/EntityFactory.hpp"
+#include "ECS/World.hpp"
 
 namespace EntityFactory {
     Entity createAnt(World& world, float x, float y) {
