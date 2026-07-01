@@ -6,6 +6,7 @@ class PheromoneGrid {
         PheromoneGrid(int width, int height);
 
         void deposit(int x, int y, float amount);
+        void diffuse(float rate);
         float get(int x, int y) const;
 
         void getStrongestNeighbor(int x, int y, int& outDx, int& outDy) const;
@@ -21,4 +22,5 @@ class PheromoneGrid {
         int m_width;
         int m_height;
         std::vector<float> m_cells;
+        std::vector<float> m_buffer;
 };

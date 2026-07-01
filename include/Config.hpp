@@ -3,6 +3,7 @@
 struct Config {
     const int WIN_WIDTH = 1280;
     const int WIN_HEIGHT = 720;
+    const float TILE_SIZE = 16.f;
     const int GRID_WIDTH = WIN_WIDTH/10;
     const int GRID_HEIGHT = WIN_HEIGHT/10;
 
@@ -17,6 +18,7 @@ struct Config {
     bool paused = false;
     float pheromoneEvapRate = 0.995f;
     float pheromoneDepositAmount = 0.5f;
+    float pheromoneDiffusionRate = 0.1f;
 
     // Trigger flags for actions
     bool spawnAntsRequested = false;

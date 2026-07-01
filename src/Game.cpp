@@ -24,7 +24,7 @@
 #include <imgui-SFML.h>
 
 Game::Game() : m_window(sf::VideoMode(sf::Vector2u(config.WIN_WIDTH, config.WIN_HEIGHT)), "SIM")
-             , m_grid(config.GRID_WIDTH, config.GRID_HEIGHT, 10.f)
+             , m_grid(config.GRID_WIDTH, config.GRID_HEIGHT, config.TILE_SIZE)
              , m_pheromones(config.GRID_WIDTH, config.WIN_HEIGHT)
              , m_camera(sf::Vector2f(config.WIN_WIDTH/2.f, config.WIN_HEIGHT/2.f), sf::Vector2f({config.WIN_WIDTH/2.f, config.WIN_HEIGHT/2.f})) {
     m_window.setFramerateLimit(static_cast<unsigned int>(TICKS_PER_SECOND));
@@ -40,7 +40,7 @@ Game::Game() : m_window(sf::VideoMode(sf::Vector2u(config.WIN_WIDTH, config.WIN_
     Entity nestEntity = EntityFactory::createNest(m_world, 640.f, 300.f);
     auto& nestPos = m_world.positions[nestEntity];
 
-    for (int i = 0; i < 50; ++i) {
+    for (int i = 0; i < 1; ++i) {
         float ax = nestPos.x + Random::getFloat(-30.f, +30.f);
         float ay = nestPos.y + Random::getFloat(-30.f, +30.f);
         Entity e = EntityFactory::createAnt(m_world, ax, ay);
@@ -159,6 +159,7 @@ void Game::update(sf::Time dt) {
             m_pheromones.deposit(gx, gy, config.pheromoneDepositAmount);
         }
         m_pheromones.evaporate(config.pheromoneEvapRate);
+        m_pheromones.diffuse(config.pheromoneDiffusionRate);
         Systems::interaction(m_world);
         Systems::behavior(m_world, dt);
         Systems::wander(m_world, dt);

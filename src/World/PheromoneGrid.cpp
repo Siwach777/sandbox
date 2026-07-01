@@ -3,7 +3,8 @@
 
 PheromoneGrid::PheromoneGrid(int width , int height) 
                             :m_width(width), m_height(height)
-                            ,m_cells(width*height, 0.f){}
+                            ,m_cells(width*height, 0.f)
+                            ,m_buffer(width*height, 0.f){}
                         
 void PheromoneGrid::deposit(int x, int y, float amount) {
     if (inBounds(x, y)) {
@@ -48,4 +49,34 @@ void PheromoneGrid::evaporate(float factor) {
 float PheromoneGrid::getMaxValue() const {
     if (m_cells.empty()) return 0.f;
     return *std::max_element(m_cells.begin(), m_cells.end());
+}
+
+void PheromoneGrid::diffuse(float rate) {
+    if (rate <= 0.f) return;
+
+    for (int y = 1; y < m_height - 1; ++y) {
+        for (int x = 1; x < m_width -1; ++x) {
+            int idx = y * m_width + x;
+            float neighborAvg = (
+                m_cells[idx - 1] +
+                m_cells[idx + 1] +
+                m_cells[idx - m_width] +
+                m_cells[idx + m_width]
+            ) / 4.f;
+
+            m_buffer[idx] = m_cells[idx] * (1.f - rate) + neighborAvg * rate;
+        }
+    }
+
+    for (int x = 0; x < m_width; ++x) {
+        m_buffer[x] = m_cells[x];
+         m_buffer[(m_height - 1) * m_width + x] = m_cells[(m_height - 1) * m_width + x];
+    }
+
+    for (int y = 0; y < m_height; ++y) {
+        m_buffer[y*m_width] = m_cells[y*m_width];
+        m_buffer[y * m_width + m_width - 1] = m_cells[y * m_width + m_width - 1];
+    }
+
+    std::swap(m_cells, m_buffer);
 }
