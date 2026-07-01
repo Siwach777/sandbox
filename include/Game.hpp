@@ -4,6 +4,7 @@
 #include "Camera.hpp"
 #include "HUD.hpp"
 #include "ECS/World.hpp"
+#include "World/PheromoneGrid.hpp"
 
 enum class ToolMode { TilePaint, FoodPlace };
 
@@ -27,6 +28,7 @@ class Game {
         Camera m_camera;
         HUD m_hud;
         World m_world;
+        PheromoneGrid m_pheromones;
         float m_fps = 0.f;
 
         TileType m_selectedTile = TileType::Dirt;

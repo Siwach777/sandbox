@@ -24,6 +24,7 @@
 
 Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM")
              , m_grid(128, 72, 10.f)
+             , m_pheromones(128, 72)
              , m_camera({640.f, 360.f}, {640.f, 360.f}) {
     m_window.setFramerateLimit(static_cast<unsigned int>(TICKS_PER_SECOND));
     if (!m_hud.init("assets/fonts/JetBrainsMono-Bold.ttf")) {
@@ -59,7 +60,7 @@ void Game::run() {
 
     while (m_window.isOpen()) {
         sf::Time elapsed = clock.restart();
-        accumulator += elapsed;
+        accumulator += elapsed * config.simSpeed;
 
         processEvents();
 
@@ -68,7 +69,7 @@ void Game::run() {
             accumulator -= TIME_PER_TICK;
         }
         ImGui::SFML::Update(m_window, elapsed);
-        DebugPanel::showStats(m_fps, static_cast<int>(m_world.ants.size()), static_cast<int>(m_world.foods.size()), m_camera.getCenter(), m_camera.getZoom());
+        DebugPanel::showStats(m_fps, static_cast<int>(m_world.ants.size()), static_cast<int>(m_world.foods.size()), m_camera.getCenter(), m_camera.getZoom(), m_pheromones);
         DebugPanel::showEntityList(m_world, m_selectedEntity);
         DebugPanel::showInspector(m_world, m_selectedEntity);
         DebugPanel::showControls();
@@ -148,6 +149,7 @@ void Game::update(sf::Time dt) {
     }
 
     if (!config.paused) {
+        m_pheromones.evaporate(config.pheromoneEvapRate);
         Systems::interaction(m_world);
         Systems::behavior(m_world, dt);
         Systems::wander(m_world, dt);

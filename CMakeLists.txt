@@ -46,6 +46,7 @@ add_executable(world_sim
 	src/Systems/BehaviorSystem.cpp
 	src/Systems/InteractionSystem.cpp
 	src/UI/DebugPanel.cpp
+	src/World/PheromoneGrid.cpp
 )
 
 target_include_directories(world_sim PRIVATE

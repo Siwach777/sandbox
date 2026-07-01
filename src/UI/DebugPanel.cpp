@@ -4,13 +4,16 @@
 #include <imgui.h>
 #include <imgui-SFML.h>
 
-void DebugPanel::showStats(float fps, int antCount, int foodCount, sf::Vector2f cameraPos, float zoom) {
+void DebugPanel::showStats(float fps, int antCount, int foodCount, sf::Vector2f cameraPos, float zoom, PheromoneGrid m_pheromones) {
     ImGui::Begin("Simulation");
 
     ImGui::Text("FPS: %.1f", fps);
     ImGui::Separator();
     ImGui::Text("Ants: %d", antCount);
     ImGui::Text("Food sources: %d", foodCount);
+    ImGui::Separator();
+    ImGui::Text("Pheromone gridL %dx%d", m_pheromones.getWidth(), m_pheromones.getHeight());
+    ImGui::Text("Max pheromone: %.3f", m_pheromones.getMaxValue());
     ImGui::Separator();
     ImGui::Text("Camera: (%0.f, %0.f)", cameraPos.x, cameraPos.y);
     ImGui::Text("Zoom: %.2f", zoom);
@@ -62,8 +65,11 @@ void DebugPanel::showControls() {
     ImGui::Checkbox("Pause Simulation", &config.paused);
     ImGui::Separator();
 
+    ImGui::SliderFloat("Simulation Speed", &config.simSpeed, 0.1f, 50.f);
+    ImGui::Separator();
+
     ImGui::Text("Movement");
-    ImGui::SliderFloat("Base Speed", &config.speed, 10.f, 500.f);
+    ImGui::SliderFloat("Base Speed", &config.speed, 10.f, 100.f);
     ImGui::SliderFloat("Wander Interval", &config.wanderInterval, 0.1f, 5.0f);
 
     ImGui::Separator();
@@ -74,7 +80,7 @@ void DebugPanel::showControls() {
 
     ImGui::Separator();
     ImGui::Text("Spawning");
-    ImGui::SliderInt("Spawn Count", &config.spawnCount, 1, 100);
+    ImGui::SliderInt("Spawn Count", &config.spawnCount, 1, 1000);
     
     if (ImGui::Button("Spawn Ants")) {
         config.spawnAntsRequested = true;
