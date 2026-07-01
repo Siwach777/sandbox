@@ -1,6 +1,11 @@
 #pragma once
 
 struct Config {
+    const int WIN_WIDTH = 1280;
+    const int WIN_HEIGHT = 720;
+    const int GRID_WIDTH = WIN_WIDTH/10;
+    const int GRID_HEIGHT = WIN_HEIGHT/10;
+
     float speed = 50.f;
     float changeInterval = 1.f;
     float wanderInterval = 1.5f;
@@ -16,6 +21,7 @@ struct Config {
     // Trigger flags for actions
     bool spawnAntsRequested = false;
     bool spawnFoodRequested = false;
+    bool showPheromones = true;
 };
 
 extern Config config;

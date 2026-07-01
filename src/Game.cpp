@@ -6,6 +6,7 @@
 #include "Systems/RenderSystem.hpp"
 #include "Systems/BehaviorSystem.hpp"
 #include "Systems/InteractionSystem.hpp"
+#include "Systems/PheromoneRenderSystem.hpp"
 #include "UI/DebugPanel.hpp"
 #include "Config.hpp"
 #include "Random.hpp"
@@ -22,10 +23,10 @@
 #include <imgui.h>
 #include <imgui-SFML.h>
 
-Game::Game() : m_window(sf::VideoMode({1280u, 720u}), "SIM")
-             , m_grid(128, 72, 10.f)
-             , m_pheromones(128, 72)
-             , m_camera({640.f, 360.f}, {640.f, 360.f}) {
+Game::Game() : m_window(sf::VideoMode(sf::Vector2u(config.WIN_WIDTH, config.WIN_HEIGHT)), "SIM")
+             , m_grid(config.GRID_WIDTH, config.GRID_HEIGHT, 10.f)
+             , m_pheromones(config.GRID_WIDTH, config.WIN_HEIGHT)
+             , m_camera(sf::Vector2f(config.WIN_WIDTH/2.f, config.WIN_HEIGHT/2.f), sf::Vector2f({config.WIN_WIDTH/2.f, config.WIN_HEIGHT/2.f})) {
     m_window.setFramerateLimit(static_cast<unsigned int>(TICKS_PER_SECOND));
     if (!m_hud.init("assets/fonts/JetBrainsMono-Bold.ttf")) {
         std::cout << "[ERROR] : Font didnt load" << std::endl;
@@ -149,6 +150,14 @@ void Game::update(sf::Time dt) {
     }
 
     if (!config.paused) {
+        for (Entity entity : m_world.ants) {
+            if (m_world.positions.count(entity) == 0) { continue; }
+            auto& pos = m_world.positions[entity];
+
+            int gx = static_cast<int>(pos.x / m_grid.getTileSize());
+            int gy = static_cast<int>(pos.y / m_grid.getTileSize());
+            m_pheromones.deposit(gx, gy, config.pheromoneDepositAmount);
+        }
         m_pheromones.evaporate(config.pheromoneEvapRate);
         Systems::interaction(m_world);
         Systems::behavior(m_world, dt);
@@ -178,6 +187,9 @@ void Game::render() {
     m_grid.render(m_window);
 
     // ECS
+    if (config.showPheromones) {
+    Systems::renderPheromones(m_pheromones, m_window, m_grid.getTileSize());
+    }
     Systems::render(m_world, m_window);
 
     // Mouse Highlight

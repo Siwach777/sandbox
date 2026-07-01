@@ -45,6 +45,7 @@ add_executable(world_sim
 	src/Systems/MovementSystem.cpp
 	src/Systems/BehaviorSystem.cpp
 	src/Systems/InteractionSystem.cpp
+	src/Systems/PheromoneRenderSystem.cpp
 	src/UI/DebugPanel.cpp
 	src/World/PheromoneGrid.cpp
 )
