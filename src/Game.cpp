@@ -41,14 +41,26 @@ Game::Game() : m_window(sf::VideoMode(sf::Vector2u(config.WIN_WIDTH, config.WIN_
     Entity nestEntity = EntityFactory::createNest(m_world, 640.f, 300.f);
     auto& nestPos = m_world.positions[nestEntity];
 
-    for (int i = 0; i < 1; ++i) {
+    for (int i = 0; i < 100; ++i) {
         float ax = nestPos.x + Random::getFloat(-30.f, +30.f);
         float ay = nestPos.y + Random::getFloat(-30.f, +30.f);
         Entity e = EntityFactory::createAnt(m_world, ax, ay);
-        m_world.belongToNests[e] = {nestEntity}; 
-        auto& wander = m_world.wanders[e];
+        m_world.belongToNests[e] = {nestEntity};
+        m_world.headings[e].angle = Random::getFloat(0.f, 2.f * 3.14159265f); 
+        auto& wander = m_world.wanders[e]; 
         wander.speed *= Random::getFloat(0.8f, 1.2f);
         wander.changeInterval *= Random::getFloat(0.5f, 1.5f);
+        float angle = Random::getFloat(0.f, 2.f * 3.14159f);
+        m_world.velocities[e] = {
+            std::cos(angle) * config.speed,
+            std::sin(angle) * config.speed
+        };
+    }
+
+    for (int i = 0; i < 20; ++i) {
+            float fx = nestPos.x + Random::getFloat(-100.f, +100.f);
+            float fy = nestPos.y + Random::getFloat(-100.f, +100.f);
+            EntityFactory::createFood(m_world, fx, fy);
     }
 
 }
@@ -129,9 +141,15 @@ void Game::update(sf::Time dt) {
                 float ay = nestPos.y + Random::getFloat(-30.f, +30.f);
                 Entity e = EntityFactory::createAnt(m_world, ax, ay);
                 m_world.belongToNests[e] = {nestEntity};
+                m_world.headings[e].angle = Random::getFloat(0.f, 2.f * 3.14159265f);
                 auto& wander = m_world.wanders[e];
                 wander.speed = config.speed * Random::getFloat(0.8f, 1.2f);
                 wander.changeInterval = config.wanderInterval * Random::getFloat(0.8f, 1.2f);
+                float angle = Random::getFloat(0.f, 2.f * 3.14159f);
+                m_world.velocities[e] = {
+                    std::cos(angle) * config.speed,
+                    std::sin(angle) * config.speed
+                };
             }
         }
         config.spawnAntsRequested = false;

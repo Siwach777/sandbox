@@ -6,11 +6,9 @@
 
 namespace Systems {
     void pheromoneSense(World& world, PheromoneGrid& pheromones, float tileSize, sf::Time dt) {
-        float sensorDist = tileSize * 2.5f;
+        float sensorDist = tileSize * 5.f;
         float sensorAngle = 0.6f;
-        float turnStrength = tileSize / 2.5f;
-
-        float jitter = Random::getFloat(-0.3f, 0.3f);
+        float turnStrength = tileSize / 4.f;
 
         for (auto& [entity, heading] : world.headings) {
             if (!world.positions.count(entity)) { continue; }
@@ -52,6 +50,7 @@ namespace Systems {
                 }
             }
             else {
+                float jitter = Random::getFloat(-0.3f, 0.3f);
                 heading.angle += jitter * seconds;
             }
 

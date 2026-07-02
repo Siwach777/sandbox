@@ -15,13 +15,13 @@ namespace Systems {
                 case AntState::Idle : 
                     vel.x = 0.f;
                     vel.y = 0.f;
-                    if (behavior.stateTimer > 1.f) {
+                    if (behavior.stateTimer > 0.2f) {
                         behavior.state = AntState::Foraging;
                         behavior.stateTimer = 0.f;
                     }
                     break;
                 case AntState::Foraging :
-                    if (behavior.stateTimer > 8.f) {
+                    if (behavior.stateTimer > 60.f) {
                         behavior.state = AntState::Returning;
                         behavior.stateTimer = 0.f;
                     }
@@ -35,14 +35,10 @@ namespace Systems {
                         float dy = nestPos.y - antPos.y;
                         float dist = std::sqrt(dx*dx + dy*dy);
 
-                        if (dist < config.foodDist) {
+                        if (dist < 20.f) {
                             behavior.state = AntState::Idle;
                             behavior.stateTimer = 0.f;
-                        } else {
-                            float speed = config.speed;
-                            vel.x = (dx / dist) * speed;
-                            vel.y = (dy / dist) * speed;
-                        }
+                        } 
                     }
                     break;
             }

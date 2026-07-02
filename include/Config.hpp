@@ -7,16 +7,16 @@ struct Config {
     const int GRID_WIDTH = WIN_WIDTH/TILE_SIZE;
     const int GRID_HEIGHT = WIN_HEIGHT/TILE_SIZE;
 
-    float speed = 50.f;
+    float speed = TILE_SIZE*20;
     float changeInterval = 1.f;
     float wanderInterval = 1.5f;
-    float foodDist = 10.f;
-    float foodPickupRange = 10.f;
     float simSpeed = 1.f;
     int foodPickupAmount = 10;
-    int spawnCount = 10;
-    float pheromoneEvapRate = 0.9989f;
-    float pheromoneDepositAmount = 0.75f;
+    int spawnCount = 1;
+    float foodDist = TILE_SIZE*0.9f*spawnCount;
+    float foodPickupRange = foodDist;
+    float pheromoneEvapRate = 0.999f;
+    float pheromoneDepositAmount = 1.f;
     float pheromoneDiffusionRate = 0.02f;
     int pheromoneDiffuseEveryNTicks = 4;
 
