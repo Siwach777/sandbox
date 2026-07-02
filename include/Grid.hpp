@@ -12,6 +12,7 @@ class Grid {
         bool inBounds(int x, int y) const;
 
         void render(sf::RenderWindow& window);
+        void updateAllVertices();
         sf::Vector2i worldToGrid(sf::Vector2f worldPos) const;
 
         int getWidth() const {return m_width;}

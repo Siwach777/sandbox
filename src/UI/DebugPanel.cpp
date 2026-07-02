@@ -65,6 +65,9 @@ void DebugPanel::showControls() {
     ImGui::Checkbox("Pause Simulation", &config.paused);
     ImGui::Separator();
 
+    ImGui::Checkbox("Show Grid", &config.showGrid);
+    ImGui::Separator();
+
     ImGui::Checkbox("Show Pheromones", &config.showPheromones);
     ImGui::Separator();
 

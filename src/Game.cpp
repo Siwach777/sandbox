@@ -147,6 +147,12 @@ void Game::update(sf::Time dt) {
         config.spawnFoodRequested = false;
     }
 
+    static bool lastShowGrid = config.showGrid;
+    if (config.showGrid != lastShowGrid) {
+        m_grid.updateAllVertices();
+        lastShowGrid = config.showGrid;
+    }
+
     // Propagate config changes to existing ants
     for (auto& [entity, wander] : m_world.wanders) {
         wander.speed = config.speed;
@@ -155,6 +161,7 @@ void Game::update(sf::Time dt) {
 
     if (!config.paused) {
         for (Entity entity : m_world.ants) {
+            if ((m_tickcount + entity) % 36 != 0) {continue;}
             if (m_world.positions.count(entity) == 0) { continue; }
             auto& pos = m_world.positions[entity];
 
@@ -173,9 +180,9 @@ void Game::update(sf::Time dt) {
         }
         m_pheromones.evaporate(config.pheromoneEvapRate);
         ++m_tickcount;
-        if (m_tickcount % config.pheromoneDiffuseEveryNTicks == 0 && config.pheromoneDiffuseEveryNTicks != 0) {
-            m_pheromones.diffuse(config.pheromoneDiffusionRate);
-        }
+        // if (m_tickcount % config.pheromoneDiffuseEveryNTicks == 0 && config.pheromoneDiffuseEveryNTicks != 0) {
+        //     m_pheromones.diffuse(config.pheromoneDiffusionRate);
+        // }
         Systems::pheromoneSense(m_world, m_pheromones, m_grid.getTileSize(), dt);
         Systems::interaction(m_world);
         Systems::behavior(m_world, dt);

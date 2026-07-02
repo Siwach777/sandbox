@@ -1,4 +1,5 @@
 #include "Grid.hpp"
+#include "Config.hpp"
 #include <vector>
 
 Grid::Grid(int width, int height, float tileSize) 
@@ -51,7 +52,7 @@ void Grid::updateTileVeritces(int x, int y, TileType type) {
     float px = x * m_tileSize;
     float py = y * m_tileSize;
 
-    float size = m_tileSize - (m_tileSize/10.f);
+    float size = config.showGrid ? (m_tileSize - (m_tileSize/10.f)) : m_tileSize;
     sf::Color color = tileColor(type);
 
     m_vertices[idx + 0].position = {px, py};
@@ -67,4 +68,12 @@ void Grid::updateTileVeritces(int x, int y, TileType type) {
     m_vertices[idx + 4].color = color;
     m_vertices[idx + 5].position = {px, py + size};
     m_vertices[idx + 5].color = color;
+}
+
+void Grid::updateAllVertices() {
+    for (int y = 0; y < m_height; ++y) {
+        for (int x = 0; x < m_width; ++x) {
+            updateTileVeritces(x, y, m_tiles[y * m_width + x]);
+        }
+    }
 }
