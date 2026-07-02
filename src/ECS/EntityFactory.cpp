@@ -6,7 +6,7 @@ namespace EntityFactory {
         Entity e = world.createEntity();
         world.positions[e] = {x, y};
         world.velocities[e] = {0.f, 0.f};
-        world.renderables[e] = {3.f, sf::Color::Red};
+        world.renderables[e] = {config.TILE_SIZE * 0.8f, sf::Color::Red};
         world.wanders[e] = {};
         world.antBehaviors[e] = {};
         world.headings[e] = {};
@@ -18,7 +18,7 @@ namespace EntityFactory {
         Entity e = world.createEntity();
         // float size = config.spawnCount / 4.f;
         world.positions[e] = {x, y};
-        world.renderables[e] = {3.f, sf::Color::Green};
+        world.renderables[e] = {config.TILE_SIZE * 0.9f, sf::Color::Green};
         world.foodAmounts[e] = {};
         world.foods.insert(e);
         return e;

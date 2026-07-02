@@ -10,10 +10,7 @@ namespace Systems {
             auto& vel = world.velocities[entity];
             auto& belongs = world.belongToNests[entity];
             behavior.stateTimer += dt.asSeconds();
-            // Color State
-            // if (world.renderables.count(entity) > 0) {
-            //     auto&
-            // }
+            
             switch (behavior.state) {
                 case AntState::Idle : 
                     vel.x = 0.f;

@@ -3,7 +3,7 @@
 struct Config {
     const int WIN_WIDTH = 1280;
     const int WIN_HEIGHT = 720;
-    const float TILE_SIZE = 6.f;
+    const float TILE_SIZE = 5.f;
     const int GRID_WIDTH = WIN_WIDTH/TILE_SIZE;
     const int GRID_HEIGHT = WIN_HEIGHT/TILE_SIZE;
 
@@ -15,8 +15,8 @@ struct Config {
     float simSpeed = 1.f;
     int foodPickupAmount = 10;
     int spawnCount = 10;
-    float pheromoneEvapRate = 0.996f;
-    float pheromoneDepositAmount = 0.5f;
+    float pheromoneEvapRate = 0.998f;
+    float pheromoneDepositAmount = 0.75f;
     float pheromoneDiffusionRate = 0.02f;
     int pheromoneDiffuseEveryNTicks = 4;
 
