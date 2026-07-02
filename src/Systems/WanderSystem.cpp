@@ -18,11 +18,15 @@ namespace Systems {
             
             wander.timer -= dt.asSeconds();
             if (wander.timer <= 0.f) {
-                float angle = Random::getFloat(0.f, 6.28318f);
-                vel.x = std::cos(angle) * wander.speed;
-                vel.y = std::sin(angle) * wander.speed;
+                if (world.headings.count(entity)) {
+                    world.headings[entity].angle += Random::getFloat(-0.1f, 0.1f);
+                } else {
+                    float angle = Random::getFloat(0.f, 6.28318f);
+                    vel.x = std::cos(angle) * wander.speed;
+                    vel.y = std::sin(angle) * wander.speed;
 
-                wander.timer = wander.changeInterval;
+                    wander.timer = wander.changeInterval;
+                }
             }
         }
     }
