@@ -50,3 +50,7 @@ struct AntBehavior {
     AntState state = AntState::Idle;
     float stateTimer = 0.f;
 };
+
+struct Heading {
+    float angle = 0.f;
+};

@@ -18,7 +18,7 @@ namespace Systems {
                 case AntState::Idle : 
                     vel.x = 0.f;
                     vel.y = 0.f;
-                    if (behavior.stateTimer > 2.f) {
+                    if (behavior.stateTimer > 1.f) {
                         behavior.state = AntState::Foraging;
                         behavior.stateTimer = 0.f;
                     }

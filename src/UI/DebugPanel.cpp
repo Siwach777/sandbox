@@ -74,12 +74,16 @@ void DebugPanel::showControls() {
     ImGui::SliderFloat("Diffusion rate", &config.pheromoneDiffusionRate, 0.001f, 0.5f);
     ImGui::Separator();
 
-    // ImGui::SliderFloat("Evaporation rate", &config.pheromoneEvapRate, 0.1f, 2.f);
-    // ImGui::Separator();
+    ImGui::SliderFloat("Evaporation rate", &config.pheromoneEvapRate, 0.1f, 2.f);
+    ImGui::Separator();
+
+    ImGui::SliderInt("Diffusion per N ticks", &config.pheromoneDiffuseEveryNTicks, 1, 10);
+    ImGui::Separator();
+
 
     ImGui::Text("Movement");
     ImGui::SliderFloat("Base Speed", &config.speed, 10.f, 100.f);
-    ImGui::SliderFloat("Wander Interval", &config.changeInterval, 0.1f, 10.0f);
+    ImGui::SliderFloat("Wander Interval", &config.wanderInterval, 0.1f, 10.0f);
 
     ImGui::Separator();
     ImGui::Text("Interaction");

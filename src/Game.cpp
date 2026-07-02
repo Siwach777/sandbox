@@ -7,6 +7,7 @@
 #include "Systems/BehaviorSystem.hpp"
 #include "Systems/InteractionSystem.hpp"
 #include "Systems/PheromoneRenderSystem.hpp"
+#include "Systems/PheromoneSenseSystem.hpp"
 #include "UI/DebugPanel.hpp"
 #include "Config.hpp"
 #include "Random.hpp"
@@ -46,7 +47,7 @@ Game::Game() : m_window(sf::VideoMode(sf::Vector2u(config.WIN_WIDTH, config.WIN_
         Entity e = EntityFactory::createAnt(m_world, ax, ay);
         m_world.belongToNests[e] = {nestEntity}; 
         auto& wander = m_world.wanders[e];
-        wander.speed *= Random::getFloat(-1.2f, 1.2f);
+        wander.speed *= Random::getFloat(0.8f, 1.2f);
         wander.changeInterval *= Random::getFloat(0.5f, 1.5f);
     }
 
@@ -159,10 +160,23 @@ void Game::update(sf::Time dt) {
 
             int gx = static_cast<int>(pos.x / m_grid.getTileSize());
             int gy = static_cast<int>(pos.y / m_grid.getTileSize());
-            m_pheromones.deposit(gx, gy, config.pheromoneDepositAmount);
+            float amount = config.pheromoneDepositAmount;
+
+            if (m_world.antBehaviors.count(entity)) {
+                auto& behavior = m_world.antBehaviors[entity];
+                if (behavior.state == AntState::Returning)
+                    amount *= 3.f;
+                else if (behavior.state == AntState::Idle) 
+                    continue;
+            }
+            m_pheromones.deposit(gx, gy, amount);
         }
         m_pheromones.evaporate(config.pheromoneEvapRate);
-        m_pheromones.diffuse(config.pheromoneDiffusionRate);
+        ++m_tickcount;
+        if (m_tickcount % config.pheromoneDiffuseEveryNTicks == 0 && config.pheromoneDiffuseEveryNTicks != 0) {
+            m_pheromones.diffuse(config.pheromoneDiffusionRate);
+        }
+        Systems::pheromoneSense(m_world, m_pheromones, m_grid.getTileSize(), dt);
         Systems::interaction(m_world);
         Systems::behavior(m_world, dt);
         Systems::wander(m_world, dt);

@@ -18,7 +18,7 @@ namespace Systems {
             
             wander.timer -= dt.asSeconds();
             if (wander.timer <= 0.f) {
-                float angle = Random::getFloat(0.f, 3.1416f);
+                float angle = Random::getFloat(0.f, 6.28318f);
                 vel.x = std::cos(angle) * wander.speed;
                 vel.y = std::sin(angle) * wander.speed;
 

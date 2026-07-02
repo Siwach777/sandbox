@@ -9,6 +9,7 @@ namespace EntityFactory {
         world.renderables[e] = {3.f, sf::Color::Red};
         world.wanders[e] = {};
         world.antBehaviors[e] = {};
+        world.headings[e] = {};
         world.ants.insert(e);
         return e;
     }

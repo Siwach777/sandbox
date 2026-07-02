@@ -30,6 +30,7 @@ class Game {
         World m_world;
         PheromoneGrid m_pheromones;
         float m_fps = 0.f;
+        int m_tickcount = 0;
 
         TileType m_selectedTile = TileType::Dirt;
         bool m_isPainting = false;

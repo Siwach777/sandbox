@@ -11,6 +11,8 @@ void PheromoneGrid::deposit(int x, int y, float amount) {
         int idx = y * m_width + x;
         m_cells[idx] += amount;
 
+        if (m_cells[idx] > 10.f) m_cells[idx] = 10.f;
+
         if (m_cells[idx] > m_maxPheromone) {
             m_maxPheromone = m_cells[idx];
         }
