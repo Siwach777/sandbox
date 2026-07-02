@@ -64,7 +64,7 @@ void PheromoneGrid::diffuse(float rate) {
                 m_cells[idx + m_width]
             ) / 4.f;
 
-            m_buffer[idx] = m_cells[idx] * (1.f - rate) + neighborAvg * rate;
+            m_buffer[idx] = m_cells[idx] * (1.f - rate) + neighborAvg * (rate);
         }
     }
 

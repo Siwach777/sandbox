@@ -71,7 +71,7 @@ void DebugPanel::showControls() {
     ImGui::SliderFloat("Simulation Speed", &config.simSpeed, 0.1f, 50.f);
     ImGui::Separator();
 
-    ImGui::SliderFloat("Diffusion rate", &config.pheromoneDiffusionRate, 0.01f, 1.f);
+    ImGui::SliderFloat("Diffusion rate", &config.pheromoneDiffusionRate, 0.001f, 1.f);
     ImGui::Separator();
 
     // ImGui::SliderFloat("Evaporation rate", &config.pheromoneEvapRate, 0.1f, 2.f);

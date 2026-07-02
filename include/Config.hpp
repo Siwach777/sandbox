@@ -3,9 +3,9 @@
 struct Config {
     const int WIN_WIDTH = 1280;
     const int WIN_HEIGHT = 720;
-    const float TILE_SIZE = 16.f;
-    const int GRID_WIDTH = WIN_WIDTH/10;
-    const int GRID_HEIGHT = WIN_HEIGHT/10;
+    const float TILE_SIZE = 5.f;
+    const int GRID_WIDTH = WIN_WIDTH/TILE_SIZE;
+    const int GRID_HEIGHT = WIN_HEIGHT/TILE_SIZE;
 
     float speed = 50.f;
     float changeInterval = 1.f;

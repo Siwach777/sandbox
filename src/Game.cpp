@@ -25,7 +25,7 @@
 
 Game::Game() : m_window(sf::VideoMode(sf::Vector2u(config.WIN_WIDTH, config.WIN_HEIGHT)), "SIM")
              , m_grid(config.GRID_WIDTH, config.GRID_HEIGHT, config.TILE_SIZE)
-             , m_pheromones(config.GRID_WIDTH, config.WIN_HEIGHT)
+             , m_pheromones(config.GRID_WIDTH, config.GRID_HEIGHT)
              , m_camera(sf::Vector2f(config.WIN_WIDTH/2.f, config.WIN_HEIGHT/2.f), sf::Vector2f({config.WIN_WIDTH/2.f, config.WIN_HEIGHT/2.f})) {
     m_window.setFramerateLimit(static_cast<unsigned int>(TICKS_PER_SECOND));
     if (!m_hud.init("assets/fonts/JetBrainsMono-Bold.ttf")) {
@@ -61,6 +61,9 @@ void Game::run() {
 
     while (m_window.isOpen()) {
         sf::Time elapsed = clock.restart();
+        if (elapsed > sf::seconds(0.1f)) {
+            elapsed = sf::seconds(0.1f);
+        }
         accumulator += elapsed * config.simSpeed;
 
         processEvents();
