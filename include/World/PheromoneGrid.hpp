@@ -21,6 +21,8 @@ class PheromoneGrid {
     private:
         int m_width;
         int m_height;
+
+        float m_maxPheromone = 0.f;
         std::vector<float> m_cells;
         std::vector<float> m_buffer;
 };

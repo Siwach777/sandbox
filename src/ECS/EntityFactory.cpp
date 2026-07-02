@@ -15,6 +15,7 @@ namespace EntityFactory {
 
     Entity createFood(World& world, float x, float y) {
         Entity e = world.createEntity();
+        // float size = config.spawnCount / 4.f;
         world.positions[e] = {x, y};
         world.renderables[e] = {3.f, sf::Color::Green};
         world.foodAmounts[e] = {};

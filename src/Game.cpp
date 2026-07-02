@@ -212,8 +212,13 @@ void Game::render() {
     if (m_selectedEntity != INVALID_ENTITY && m_world.isAlive(m_selectedEntity) && m_world.positions.count(m_selectedEntity)) {
         auto& pos = m_world.positions[m_selectedEntity];
 
-        sf::CircleShape ring(4.f);
-        ring.setOrigin({4.f, 4.f});
+        float radius = 4.f;
+        if (m_world.renderables[m_selectedEntity].radius) {
+            radius = m_world.renderables[m_selectedEntity].radius;
+        }
+        float ringRadius = radius + 2.f;
+        sf::CircleShape ring(ringRadius);
+        ring.setOrigin({ringRadius, ringRadius});
         ring.setPosition({pos.x, pos.y});
         ring.setFillColor(sf::Color::Transparent);
         ring.setOutlineColor(sf::Color::Yellow);

@@ -17,8 +17,8 @@ struct Config {
     int spawnCount = 10;
     bool paused = false;
     float pheromoneEvapRate = 0.995f;
-    float pheromoneDepositAmount = 0.5f;
-    float pheromoneDiffusionRate = 0.1f;
+    float pheromoneDepositAmount = 0.95f;
+    float pheromoneDiffusionRate = 0.02f;
 
     // Trigger flags for actions
     bool spawnAntsRequested = false;
