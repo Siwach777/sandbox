@@ -1,28 +1,39 @@
 #pragma once
 #include <vector>
 
+enum class PheromoneType {
+    toHome,
+    toFood
+};
+
+struct PheromoneCell {
+    float toHome = 0.f;
+    float toFood = 0.f;
+};
+
 class PheromoneGrid {
     public: 
         PheromoneGrid(int width, int height);
 
-        void deposit(int x, int y, float amount);
+        void deposit(int x, int y, PheromoneType type, float amount);
         void diffuse(float rate);
-        float get(int x, int y) const;
+        float get(int x, int y, PheromoneType type) const;
 
-        void getStrongestNeighbor(int x, int y, int& outDx, int& outDy) const;
+        void getStrongestNeighbor(int x, int y, PheromoneType type, int& outDx, int& outDy) const;
 
         void evaporate(float factor);
 
         bool inBounds(int x, int y) const;
         int getWidth() const { return m_width; }
         int getHeight() const { return m_height; }
-        float getMaxValue() const;
+        float getMaxValue(PheromoneType type) const;
         
     private:
         int m_width;
         int m_height;
 
-        float m_maxPheromone = 0.f;
-        std::vector<float> m_cells;
-        std::vector<float> m_buffer;
+        float m_maxToHomePheromone = 0.f;
+        float m_maxToFoodPheromone = 0.f;
+        std::vector<PheromoneCell> m_cells;
+        std::vector<PheromoneCell> m_buffer;
 };

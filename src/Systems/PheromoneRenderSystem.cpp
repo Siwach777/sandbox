@@ -34,11 +34,15 @@ namespace Systems {
 
         for (int y = 0; y < grid.getHeight(); ++y) {
             for (int x = 0; x < grid.getWidth(); ++x) {
-                float val = grid.get(x, y);
+                float toHomeVal = grid.get(x, y, PheromoneType::toHome);
+                float toFoodVal = grid.get(x, y, PheromoneType::toFood);
+                float val = std::max(toHomeVal, toFoodVal);
                 if (val < 0.01f) continue;
 
-                uint8_t alpha = static_cast<uint8_t>(std::min(val*200.f, 255.f));
-                sf::Color color(0, 200, 0, alpha);
+                uint8_t blue = static_cast<uint8_t>(std::min(toHomeVal*200.f, 255.f));
+                uint8_t green = static_cast<uint8_t>(std::min(toFoodVal*200.f, 255.f));
+                uint8_t alpha = (std::max(blue, green));
+                sf::Color color(0, green, blue, alpha);
 
                // Calculate cell center
                 float cx = x * tileSize + tileSize / 2.f;

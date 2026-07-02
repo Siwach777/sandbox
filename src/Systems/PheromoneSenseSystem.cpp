@@ -16,8 +16,11 @@ namespace Systems {
             if (!world.positions.count(entity)) { continue; }
             if (!world.ants.count(entity)) { continue; }
 
+            PheromoneType trailType = PheromoneType::toFood;
             if (world.antBehaviors.count(entity) > 0) {
-                if (world.antBehaviors[entity].state != AntState::Foraging) {
+                if (world.antBehaviors[entity].state == AntState::Returning) {
+                    trailType = PheromoneType::toHome;
+                } else if (world.antBehaviors[entity].state == AntState::Idle) {
                     continue;
                 }
             }
@@ -30,7 +33,7 @@ namespace Systems {
                 float sy = pos.y + std::sin(h + angleOffset) * sensorDist;
                 int gx = static_cast<int>(sx / tileSize);
                 int gy = static_cast<int>(sy / tileSize);
-                return pheromones.get(gx, gy);
+                return pheromones.get(gx, gy, trailType);
             };
 
             float left = sample(-sensorAngle);

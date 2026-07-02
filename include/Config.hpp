@@ -15,7 +15,7 @@ struct Config {
     float simSpeed = 1.f;
     int foodPickupAmount = 10;
     int spawnCount = 10;
-    float pheromoneEvapRate = 0.998f;
+    float pheromoneEvapRate = 0.9989f;
     float pheromoneDepositAmount = 0.75f;
     float pheromoneDiffusionRate = 0.02f;
     int pheromoneDiffuseEveryNTicks = 4;

@@ -41,7 +41,7 @@ Game::Game() : m_window(sf::VideoMode(sf::Vector2u(config.WIN_WIDTH, config.WIN_
     Entity nestEntity = EntityFactory::createNest(m_world, 640.f, 300.f);
     auto& nestPos = m_world.positions[nestEntity];
 
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 1; ++i) {
         float ax = nestPos.x + Random::getFloat(-30.f, +30.f);
         float ay = nestPos.y + Random::getFloat(-30.f, +30.f);
         Entity e = EntityFactory::createAnt(m_world, ax, ay);
@@ -172,13 +172,14 @@ void Game::update(sf::Time dt) {
             if (m_world.antBehaviors.count(entity)) {
                 auto& behavior = m_world.antBehaviors[entity];
                 if (behavior.state == AntState::Returning)
-                    amount *= 3.f;
+                    m_pheromones.deposit(gx, gy, PheromoneType::toFood, amount * 3.f);
                 else if (behavior.state == AntState::Foraging) 
-                    amount *= 2.f;
+                    m_pheromones.deposit(gx, gy, PheromoneType::toHome, amount * 2.f);
                 else if (behavior.state == AntState::Idle)
                     continue;
             }
-            m_pheromones.deposit(gx, gy, amount);
+            m_pheromones.evaporate(config.pheromoneEvapRate);
+            // m_pheromones.diffuse(config.pheromoneDiffusionRate);
         }
         m_pheromones.evaporate(config.pheromoneEvapRate);
         ++m_tickcount;

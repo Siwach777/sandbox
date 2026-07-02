@@ -13,7 +13,7 @@ void DebugPanel::showStats(float fps, int antCount, int foodCount, sf::Vector2f 
     ImGui::Text("Food sources: %d", foodCount);
     ImGui::Separator();
     ImGui::Text("Pheromone gridL %dx%d", m_pheromones.getWidth(), m_pheromones.getHeight());
-    ImGui::Text("Max pheromone: %.3f", m_pheromones.getMaxValue());
+    // ImGui::Text("Max pheromone: %.3f", m_pheromones.getMaxValue());
     ImGui::Separator();
     ImGui::Text("Camera: (%0.f, %0.f)", cameraPos.x, cameraPos.y);
     ImGui::Text("Zoom: %.2f", zoom);
