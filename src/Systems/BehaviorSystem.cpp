@@ -1,4 +1,5 @@
 #include "Systems/BehaviorSystem.hpp"
+#include "Random.hpp"
 #include "ECS/World.hpp"
 #include "Config.hpp"
 #include <cmath>
@@ -22,6 +23,9 @@ namespace Systems {
                     break;
                 case AntState::Foraging :
                     if (behavior.stateTimer > 60.f) {
+                        if (world.headings.count(entity)) {
+                            world.headings[entity].angle += 3.14159f /*+ Random::getFloat(-0.1f, 1.f)*/;
+                        }
                         behavior.state = AntState::Returning;
                         behavior.stateTimer = 0.f;
                     }
@@ -38,6 +42,9 @@ namespace Systems {
                         if (dist < 20.f) {
                             behavior.state = AntState::Idle;
                             behavior.stateTimer = 0.f;
+                            if (world.headings.count(entity)) {
+                                world.headings[entity].angle += 3.14159f /* + Random::getFloat(-0.1f, 1.f)*/;
+                            }
                         } 
                     }
                     break;

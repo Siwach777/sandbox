@@ -1,6 +1,7 @@
 #include "Systems/InteractionSystem.hpp"
 #include "ECS/World.hpp"
 #include "Config.hpp"
+#include "Random.hpp"
 #include <algorithm>
 #include <vector>
 
@@ -39,6 +40,9 @@ namespace Systems {
                         world.carryings[antEntity].amount += pickup;
                     }
 
+                    if (world.headings.count(antEntity)) {
+                        world.headings[antEntity].angle += 3.14159f + Random::getFloat(-0.1f, 1.f);
+                    }
                     behavior.state = AntState::Returning;
                     behavior.stateTimer = 0.f;
 
