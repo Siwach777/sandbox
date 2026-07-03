@@ -179,7 +179,7 @@ void Game::update(sf::Time dt) {
 
     if (!config.paused) {
         for (Entity entity : m_world.ants) {
-            if ((m_tickcount + entity) % static_cast<int>(config.TILE_SIZE * 12) != 0) {continue;}
+            if ((m_tickcount + entity) % static_cast<int>(config.TILE_SIZE * 4) != 0) {continue;}
             if (m_world.positions.count(entity) == 0) { continue; }
             auto& pos = m_world.positions[entity];
 
@@ -196,7 +196,7 @@ void Game::update(sf::Time dt) {
                 else if (behavior.state == AntState::Idle)
                     continue;
             }
-            m_pheromones.evaporate(config.pheromoneEvapRate);
+            // m_pheromones.evaporate(config.pheromoneEvapRate);
             // m_pheromones.diffuse(config.pheromoneDiffusionRate);
         }
         m_pheromones.evaporate(config.pheromoneEvapRate);

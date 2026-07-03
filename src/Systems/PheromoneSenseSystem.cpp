@@ -41,7 +41,7 @@ namespace Systems {
             float seconds = dt.asSeconds();
 
             if (center > 0.01f || left > 0.01f || right > 0.01f) {
-                if (center >= left && center >= right) { continue; }
+                if (center >= left && center >= right) {}
                 else if (left > right) {
                     heading.angle -= turnStrength * seconds;
                 }
