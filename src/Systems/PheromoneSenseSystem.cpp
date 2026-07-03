@@ -6,9 +6,9 @@
 
 namespace Systems {
     void pheromoneSense(World& world, PheromoneGrid& pheromones, float tileSize, sf::Time dt) {
-        float sensorDist = tileSize * 6.f;
-        float sensorAngle = 0.75f;
-        float turnStrength = tileSize / 3.f;
+        float sensorDist = tileSize * 8.f;
+        float sensorAngle = 0.7f;
+        float turnStrength = config.speed * 0.5f;
 
         for (auto& [entity, heading] : world.headings) {
             if (!world.positions.count(entity)) { continue; }
@@ -26,40 +26,33 @@ namespace Systems {
             auto& pos = world.positions[entity];
             float h = heading.angle;
 
-            auto sample = [&] (float angleOffset) -> float {
-                float sx = pos.x + std::cos(h + angleOffset) * sensorDist;
-                float sy = pos.y + std::sin(h + angleOffset) * sensorDist;
-                int centerGx = static_cast<int>(sx / tileSize);
-                int centerGy = static_cast<int>(sy / tileSize);
-                float sum = 0.f;
-                int count = 0;
-                for (int dy = -1; dy <= 1; ++dy) {
-                    for (int dx = -1; dx <= 1; ++dx) {
-                        int gx = centerGx + dx;
-                        int gy = centerGy + dy;
-                        sum += pheromones.get(gx, gy, trailType);
-                        count++;
-                    }
+            float bestIntensity = 0.f;
+            float bestDirection = 0.f;
+            uint8_t sampleCount = 32;
+
+            for (int i = 0; i < sampleCount; ++i) {
+                float randomAngle = Random::getFloat(-sensorAngle, sensorAngle);
+                float randomDist = Random::getFloat(tileSize, sensorDist);
+
+                float sx = pos.x + std::cos(h + randomAngle) * randomDist;
+                float sy = pos.y + std::sin(h + randomAngle) * randomDist;
+                int gx = static_cast<int>(sx / tileSize);
+                int gy = static_cast<int>(sy / tileSize);
+
+                float intenstiy = pheromones.get(gx, gy, trailType);
+                if (intenstiy > bestIntensity) {
+                    bestIntensity = intenstiy;
+                    bestDirection = randomAngle;
                 }
-                return sum / static_cast<float>(count);
-            };
-
-            float left = sample(-sensorAngle);
-            float center = sample(0.f);
-            float right = sample(sensorAngle);
-            
-            float seconds = dt.asSeconds();
-
-            if (center > 0.01f || left > 0.01f || right > 0.01f) {
-                if (center >= left && center >= right) {
-                    heading.angle += Random::getFloat(-0.001f, 0.001f) * seconds;
-                } else {
-                    float difference = (right - left) / (left + right + 0.001f);
-                    heading.angle += difference * turnStrength * seconds;
-                } 
             }
-            else {
-                float jitter = Random::getFloat(-0.2f, 0.2f);
+
+            float seconds = dt.asSeconds();
+            if (bestIntensity > 0.01f) {
+                if (bestDirection > 0.01f) {
+                    heading.angle += bestDirection * turnStrength * seconds;
+                }
+            } else {
+                float jitter = Random::getFloat(-0.175f, 0.175f);
                 heading.angle += jitter * seconds;
             }
 

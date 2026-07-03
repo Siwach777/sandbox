@@ -16,7 +16,7 @@ class PheromoneGrid {
         PheromoneGrid(int width, int height);
 
         void deposit(int x, int y, PheromoneType type, float amount);
-        void diffuse(float rate);
+        void diffuse(float ratePerSecond, float dt);
         float get(int x, int y, PheromoneType type) const;
 
         void getStrongestNeighbor(int x, int y, PheromoneType type, int& outDx, int& outDy) const;

@@ -72,9 +72,10 @@ float PheromoneGrid::getMaxValue(PheromoneType type) const {
     return (type == PheromoneType::toHome) ? m_maxPheromone.toHome : m_maxPheromone.toFood;
 }
 
-void PheromoneGrid::diffuse(float rate) {
-    if (rate <= 0.f) return;
-PheromoneCell newMax = {0, 0};
+void PheromoneGrid::diffuse(float ratePerSecond, float dt) {
+    if (ratePerSecond <= 0.f) return;
+    float rate = std::clamp(ratePerSecond * dt, 0.f, 1.f);
+    PheromoneCell newMax = {0, 0};
 
     for (int y = 1; y < m_height - 1; ++y) {
         for (int x = 1; x < m_width -1; ++x) {
@@ -89,14 +90,14 @@ PheromoneCell newMax = {0, 0};
 
             neighborAvg.toHome = (
                 m_cells[idx - 1].toHome +
-                m_cells[idx - 1].toHome +
+                m_cells[idx + 1].toHome +
                 m_cells[idx - m_width].toHome +
                 m_cells[idx + m_width].toHome 
             ) / 4.f;
 
-            m_buffer[idx].toFood = m_cells[idx].toFood * (1.f - rate) + neighborAvg.toFood * (rate);
+            m_buffer[idx].toFood = m_cells[idx].toFood * (1.f - ratePerSecond) + neighborAvg.toFood * (ratePerSecond);
             if (m_buffer[idx].toFood > newMax.toFood) newMax.toFood = m_buffer[idx].toFood;
-            m_buffer[idx].toHome = m_cells[idx].toHome * (1.f - rate) + neighborAvg.toHome * rate;
+            m_buffer[idx].toHome = m_cells[idx].toHome * (1.f - ratePerSecond) + neighborAvg.toHome * ratePerSecond;
             if (m_buffer[idx].toHome > newMax.toHome) newMax.toHome = m_buffer[idx].toHome;
         }
     }
@@ -116,7 +117,7 @@ PheromoneCell newMax = {0, 0};
         newMax.toFood = std::max({newMax.toFood, m_buffer[y * m_width].toFood, m_buffer[y * m_width + m_width - 1].toFood});
         m_buffer[y*m_width].toHome = m_cells[y*m_width].toHome;
         m_buffer[y * m_width + m_width - 1].toHome = m_cells[y * m_width + m_width - 1].toHome;
-        newMax.toFood = std::max({newMax.toHome, m_buffer[y * m_width].toHome, m_buffer[y * m_width + m_width - 1].toHome});
+        newMax.toHome = std::max({newMax.toHome, m_buffer[y * m_width].toHome, m_buffer[y * m_width + m_width - 1].toHome});
     }
 
     std::swap(m_cells, m_buffer);

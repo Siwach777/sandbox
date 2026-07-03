@@ -7,7 +7,7 @@ struct Config {
     const int GRID_WIDTH = WIN_WIDTH/TILE_SIZE;
     const int GRID_HEIGHT = WIN_HEIGHT/TILE_SIZE;
 
-    float speed = TILE_SIZE*20;
+    float speed = TILE_SIZE*15;
     float changeInterval = 1.f;
     float wanderInterval = 1.5f;
     float simSpeed = 1.f;
@@ -15,9 +15,9 @@ struct Config {
     int spawnCount = 1;
     float foodDist = TILE_SIZE;
     float foodPickupRange = foodDist;
-    float pheromoneEvapRate = 0.075f;
+    float pheromoneEvapRate = 0.1f;
     float pheromoneDepositAmount = 4.f;
-    float pheromoneDiffusionRate = 0.02f;
+    float pheromoneDiffusionRate = 0.0175f;
     int pheromoneDiffuseEveryNTicks = 4;
 
     // Trigger flags for actions
