@@ -42,8 +42,8 @@ Game::Game() : m_window(sf::VideoMode(sf::Vector2u(config.WIN_WIDTH, config.WIN_
     auto& nestPos = m_world.positions[nestEntity];
 
     for (int i = 0; i < 1; ++i) {
-        float ax = nestPos.x + Random::getFloat(-30.f, +30.f);
-        float ay = nestPos.y + Random::getFloat(-30.f, +30.f);
+        float ax = nestPos.x + Random::getFloat(-3.f, +3.f);
+        float ay = nestPos.y + Random::getFloat(-3.f, +3.f);
         Entity e = EntityFactory::createAnt(m_world, ax, ay);
         m_world.belongToNests[e] = {nestEntity};
         m_world.headings[e].angle = Random::getFloat(0.f, 2.f * 3.14159265f); 
@@ -57,11 +57,28 @@ Game::Game() : m_window(sf::VideoMode(sf::Vector2u(config.WIN_WIDTH, config.WIN_
         };
     }
 
-    for (int i = 0; i < 20; ++i) {
-            float fx = nestPos.x + Random::getFloat(-100.f, +100.f);
-            float fy = nestPos.y + Random::getFloat(-100.f, +100.f);
-            EntityFactory::createFood(m_world, fx, fy);
+     // ================= ADD THIS =================
+    // Spawn a continuous rectangle of food centered on the nest
+    float halfWidth = 400.f;  // Distance left and right from the nest
+    float halfHeight = 300.f; // Distance up and down from the nest
+    float step = 20.f;         // Spacing between food items (approx. food diameter)
+    // 1. Draw the Top and Bottom horizontal lines
+    for (float x = nestPos.x - halfWidth; x <= nestPos.x + halfWidth; x += step) {
+        EntityFactory::createFood(m_world, x, nestPos.y - halfHeight); // Top edge
+        EntityFactory::createFood(m_world, x, nestPos.y + halfHeight); // Bottom edge
     }
+    // 2. Draw the Left and Right vertical lines (skipping corners to avoid overlap)
+    for (float y = nestPos.y - halfHeight + step; y < nestPos.y + halfHeight; y += step) {
+        EntityFactory::createFood(m_world, nestPos.x - halfWidth, y); // Left edge
+        EntityFactory::createFood(m_world, nestPos.x + halfWidth, y); // Right edge
+    }
+    // ============================================
+
+    // for (int i = 0; i < 20; ++i) {
+    //         float fx = nestPos.x + Random::getFloat(-100.f, +100.f);
+    //         float fy = nestPos.y + Random::getFloat(-100.f, +100.f);
+    //         EntityFactory::createFood(m_world, fx, fy);
+    // }
 
 }
 
@@ -199,11 +216,11 @@ void Game::update(sf::Time dt) {
             // m_pheromones.evaporate(config.pheromoneEvapRate);
             // m_pheromones.diffuse(config.pheromoneDiffusionRate);
         }
-        m_pheromones.evaporate(config.pheromoneEvapRate);
+        m_pheromones.evaporate(config.pheromoneEvapRate, dt.asSeconds());
         ++m_tickcount;
-        // if (m_tickcount % config.pheromoneDiffuseEveryNTicks == 0 && config.pheromoneDiffuseEveryNTicks != 0) {
-        //     m_pheromones.diffuse(config.pheromoneDiffusionRate);
-        // }
+        if (m_tickcount % 8 == 0 && config.pheromoneDiffuseEveryNTicks != 0) {
+            m_pheromones.diffuse(0.01f);
+        }
         Systems::pheromoneSense(m_world, m_pheromones, m_grid.getTileSize(), dt);
         Systems::interaction(m_world);
         Systems::behavior(m_world, dt);

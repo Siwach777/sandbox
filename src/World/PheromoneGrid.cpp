@@ -1,5 +1,6 @@
 #include "World/PheromoneGrid.hpp"
 #include <algorithm>
+#include <cmath>
 
 PheromoneGrid::PheromoneGrid(int width , int height) 
                             :m_width(width), m_height(height)
@@ -13,16 +14,16 @@ void PheromoneGrid::deposit(int x, int y, PheromoneType type, float amount) {
             m_cells[idx].toHome += amount;
             if (m_cells[idx].toHome > 10.f) m_cells[idx].toHome = 10.f;
 
-            if (m_cells[idx].toHome > m_maxToHomePheromone) {
-                m_maxToHomePheromone = m_cells[idx].toHome;
+            if (m_cells[idx].toHome > m_maxPheromone.toHome) {
+                m_maxPheromone.toHome = m_cells[idx].toHome;
             }
         }
         if (type == PheromoneType::toFood) {
             m_cells[idx].toFood += amount;
             if (m_cells[idx].toFood > 10.f) m_cells[idx].toFood = 10.f;
 
-            if (m_cells[idx].toFood > m_maxToFoodPheromone) {
-                m_maxToFoodPheromone = m_cells[idx].toFood;
+            if (m_cells[idx].toFood > m_maxPheromone.toFood) {
+                m_maxPheromone.toFood = m_cells[idx].toFood;
             }
         }
     }
@@ -55,52 +56,70 @@ void PheromoneGrid::getStrongestNeighbor(int x, int y, PheromoneType type, int& 
     }
 }
 
-void PheromoneGrid::evaporate(float factor) {
+void PheromoneGrid::evaporate(float ratePerSecond, float dt) {
+    float factor = std::exp(-ratePerSecond * dt);
     for (auto& cell : m_cells) {
         cell.toHome *= factor;
         cell.toFood *= factor;
         if (cell.toHome < 0.001f) cell.toHome = 0.f;
         if (cell.toFood < 0.001f) cell.toFood = 0.f;
     }
-    m_maxToHomePheromone = std::max(0.f, m_maxToHomePheromone * factor);
-    m_maxToFoodPheromone = std::max(0.f, m_maxToFoodPheromone * factor);
+    m_maxPheromone.toFood = std::max(0.f, m_maxPheromone.toFood * factor);
+    m_maxPheromone.toHome = std::max(0.f, m_maxPheromone.toHome * factor);
 }
 
 float PheromoneGrid::getMaxValue(PheromoneType type) const {
-    return (type == PheromoneType::toHome) ? m_maxToHomePheromone : m_maxToFoodPheromone;
+    return (type == PheromoneType::toHome) ? m_maxPheromone.toHome : m_maxPheromone.toFood;
 }
 
-// void PheromoneGrid::diffuse(float rate) {
-//     if (rate <= 0.f) return;
-//     float newMax = 0.f;
+void PheromoneGrid::diffuse(float rate) {
+    if (rate <= 0.f) return;
+PheromoneCell newMax = {0, 0};
 
-//     for (int y = 1; y < m_height - 1; ++y) {
-//         for (int x = 1; x < m_width -1; ++x) {
-//             int idx = y * m_width + x;
-//             float neighborAvg = (
-//                 m_cells[idx - 1] +
-//                 m_cells[idx + 1] +
-//                 m_cells[idx - m_width] +
-//                 m_cells[idx + m_width]
-//             ) / 4.f;
+    for (int y = 1; y < m_height - 1; ++y) {
+        for (int x = 1; x < m_width -1; ++x) {
+            int idx = y * m_width + x;
+            PheromoneCell neighborAvg;
+            neighborAvg.toFood = (
+                m_cells[idx - 1].toFood +
+                m_cells[idx + 1].toFood +
+                m_cells[idx - m_width].toFood +
+                m_cells[idx + m_width].toFood
+            ) / 4.f;
 
-//             m_buffer[idx] = m_cells[idx] * (1.f - rate) + neighborAvg * (rate);
-//             if (m_buffer[idx] > newMax) newMax = m_buffer[idx];
-//         }
-//     }
+            neighborAvg.toHome = (
+                m_cells[idx - 1].toHome +
+                m_cells[idx - 1].toHome +
+                m_cells[idx - m_width].toHome +
+                m_cells[idx + m_width].toHome 
+            ) / 4.f;
 
-//     for (int x = 0; x < m_width; ++x) {
-//         m_buffer[x] = m_cells[x];
-//         m_buffer[(m_height - 1) * m_width + x] = m_cells[(m_height - 1) * m_width + x];
-//         newMax = std::max({newMax, m_buffer[x], m_buffer[(m_height - 1) * m_width + x]});
-//     }
+            m_buffer[idx].toFood = m_cells[idx].toFood * (1.f - rate) + neighborAvg.toFood * (rate);
+            if (m_buffer[idx].toFood > newMax.toFood) newMax.toFood = m_buffer[idx].toFood;
+            m_buffer[idx].toHome = m_cells[idx].toHome * (1.f - rate) + neighborAvg.toHome * rate;
+            if (m_buffer[idx].toHome > newMax.toHome) newMax.toHome = m_buffer[idx].toHome;
+        }
+    }
 
-//     for (int y = 0; y < m_height; ++y) {
-//         m_buffer[y*m_width] = m_cells[y*m_width];
-//         m_buffer[y * m_width + m_width - 1] = m_cells[y * m_width + m_width - 1];
-//         newMax = std::max({newMax, m_buffer[y * m_width], m_buffer[y * m_width + m_width - 1]});
-//     }
+    for (int x = 0; x < m_width; ++x) {
+        m_buffer[x].toFood = m_cells[x].toFood;
+        m_buffer[(m_height - 1) * m_width + x].toFood = m_cells[(m_height - 1) * m_width + x].toFood;
+        newMax.toFood = std::max({newMax.toFood, m_buffer[x].toFood, m_buffer[(m_height - 1) * m_width + x].toFood});
+        m_buffer[x].toHome = m_cells[x].toHome;
+        m_buffer[(m_height - 1) * m_width + x].toHome = m_cells[(m_height - 1) * m_width + x].toHome;
+        newMax.toHome = std::max({newMax.toHome, m_buffer[x].toHome, m_buffer[(m_height - 1) * m_width + x].toHome});
+    }
 
-//     std::swap(m_cells, m_buffer);
-//     m_maxPheromone = newMax;
-// }
+    for (int y = 0; y < m_height; ++y) {
+        m_buffer[y*m_width].toFood = m_cells[y*m_width].toFood;
+        m_buffer[y * m_width + m_width - 1].toFood = m_cells[y * m_width + m_width - 1].toFood;
+        newMax.toFood = std::max({newMax.toFood, m_buffer[y * m_width].toFood, m_buffer[y * m_width + m_width - 1].toFood});
+        m_buffer[y*m_width].toHome = m_cells[y*m_width].toHome;
+        m_buffer[y * m_width + m_width - 1].toHome = m_cells[y * m_width + m_width - 1].toHome;
+        newMax.toFood = std::max({newMax.toHome, m_buffer[y * m_width].toHome, m_buffer[y * m_width + m_width - 1].toHome});
+    }
+
+    std::swap(m_cells, m_buffer);
+    m_maxPheromone.toFood = newMax.toFood;
+    m_maxPheromone.toHome = newMax.toHome;
+}

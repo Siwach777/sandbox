@@ -41,7 +41,7 @@ namespace Systems {
                     }
 
                     if (world.headings.count(antEntity)) {
-                        world.headings[antEntity].angle += 3.14159f + Random::getFloat(-0.1f, 1.f);
+                        world.headings[antEntity].angle += 3.14159f /*+ Random::getFloat(-0.1f, 1.f)*/;
                     }
                     behavior.state = AntState::Returning;
                     behavior.stateTimer = 0.f;

@@ -19,7 +19,7 @@ namespace Systems {
             wander.timer -= dt.asSeconds();
             if (wander.timer <= 0.f) {
                 if (world.headings.count(entity)) {
-                    world.headings[entity].angle += Random::getFloat(-1.f, 1.f);
+                    world.headings[entity].angle += Random::getFloat(-0.03f, 0.03f);
                 } else {
                     float angle = Random::getFloat(0.f, 6.28318f);
                     vel.x = std::cos(angle) * wander.speed;

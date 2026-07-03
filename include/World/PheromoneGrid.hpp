@@ -21,7 +21,7 @@ class PheromoneGrid {
 
         void getStrongestNeighbor(int x, int y, PheromoneType type, int& outDx, int& outDy) const;
 
-        void evaporate(float factor);
+        void evaporate(float ratePerSecond, float dt);
 
         bool inBounds(int x, int y) const;
         int getWidth() const { return m_width; }
@@ -32,8 +32,7 @@ class PheromoneGrid {
         int m_width;
         int m_height;
 
-        float m_maxToHomePheromone = 0.f;
-        float m_maxToFoodPheromone = 0.f;
+        PheromoneCell m_maxPheromone;
         std::vector<PheromoneCell> m_cells;
         std::vector<PheromoneCell> m_buffer;
 };

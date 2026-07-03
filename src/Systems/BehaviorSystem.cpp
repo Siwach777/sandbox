@@ -32,6 +32,12 @@ namespace Systems {
                     break;
                 case AntState::Returning :
                     if (world.isAlive(belongs.nest) && world.positions.count(belongs.nest) > 0) {
+                        if (behavior.stateTimer > 20.f) {
+                            if (world.headings.count(entity)) {
+                                world.headings[entity].angle += Random::getFloat(-0.1f, 1.f);
+                            }
+                            behavior.stateTimer = 0.f;
+                        }
                         auto& nestPos = world.positions[belongs.nest];
                         auto& antPos = world.positions[entity];
 

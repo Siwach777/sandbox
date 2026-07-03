@@ -6,9 +6,9 @@
 
 namespace Systems {
     void pheromoneSense(World& world, PheromoneGrid& pheromones, float tileSize, sf::Time dt) {
-        float sensorDist = tileSize * 5.f;
-        float sensorAngle = 0.6f;
-        float turnStrength = tileSize / 4.f;
+        float sensorDist = tileSize * 6.f;
+        float sensorAngle = 0.75f;
+        float turnStrength = tileSize / 3.f;
 
         for (auto& [entity, heading] : world.headings) {
             if (!world.positions.count(entity)) { continue; }
@@ -29,9 +29,19 @@ namespace Systems {
             auto sample = [&] (float angleOffset) -> float {
                 float sx = pos.x + std::cos(h + angleOffset) * sensorDist;
                 float sy = pos.y + std::sin(h + angleOffset) * sensorDist;
-                int gx = static_cast<int>(sx / tileSize);
-                int gy = static_cast<int>(sy / tileSize);
-                return pheromones.get(gx, gy, trailType);
+                int centerGx = static_cast<int>(sx / tileSize);
+                int centerGy = static_cast<int>(sy / tileSize);
+                float sum = 0.f;
+                int count = 0;
+                for (int dy = -1; dy <= 1; ++dy) {
+                    for (int dx = -1; dx <= 1; ++dx) {
+                        int gx = centerGx + dx;
+                        int gy = centerGy + dy;
+                        sum += pheromones.get(gx, gy, trailType);
+                        count++;
+                    }
+                }
+                return sum / static_cast<float>(count);
             };
 
             float left = sample(-sensorAngle);
@@ -41,16 +51,15 @@ namespace Systems {
             float seconds = dt.asSeconds();
 
             if (center > 0.01f || left > 0.01f || right > 0.01f) {
-                if (center >= left && center >= right) {}
-                else if (left > right) {
-                    heading.angle -= turnStrength * seconds;
-                }
-                else if (right > left) {
-                    heading.angle += turnStrength * seconds;    
-                }
+                if (center >= left && center >= right) {
+                    heading.angle += Random::getFloat(-0.001f, 0.001f) * seconds;
+                } else {
+                    float difference = (right - left) / (left + right + 0.001f);
+                    heading.angle += difference * turnStrength * seconds;
+                } 
             }
             else {
-                float jitter = Random::getFloat(-0.3f, 0.3f);
+                float jitter = Random::getFloat(-0.2f, 0.2f);
                 heading.angle += jitter * seconds;
             }
 

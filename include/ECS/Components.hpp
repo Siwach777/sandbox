@@ -27,7 +27,7 @@ struct Wander {
 struct Food {};
 
 struct foodAmount {
-    int amount = (config.spawnCount  * 100) / 10.f;
+    int amount = config.foodDist * 1000.f;
 };
 
 struct Nest {};
