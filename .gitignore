@@ -19,6 +19,6 @@ Thumbs.db
 *.out
 
 # Docs
-docs/roadmap/
+docs/
 
 /extra/*
