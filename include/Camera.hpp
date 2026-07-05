@@ -7,6 +7,7 @@ class Camera {
 
         void move(sf::Vector2f offset);
         void zoom(float factor);
+        void constrain(sf::Vector2f worldSize);
 
         const sf::View& getView() const { return m_view; }
         float getZoom() const { return m_zoomLevel; }
@@ -15,4 +16,5 @@ class Camera {
     private:
         sf::View m_view;
         float m_zoomLevel;
+        sf::Vector2f m_initialSize;
 };

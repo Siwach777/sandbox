@@ -1,5 +1,7 @@
-#include <SFML/Graphics.hpp>
 #include "Game.hpp"
+#include "Config.hpp"
+
+Config config;
 
 int main() {
     Game game;

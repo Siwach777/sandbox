@@ -1,17 +1,24 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <unordered_map>
+
+struct HUDData {
+    float fps;
+    sf::Vector2f cameraPos;
+    float zoom;
+    const std::string& selectedTileName;
+    const std::string& hoveredInfo;
+    const std::string& selectionInfo;
+    const std::string& toolInfo;
+    // const std::string& stateName;
+};
 
 class HUD {
     public:
         bool init(const std::string& fontPath);
 
-        void render(sf::RenderWindow& window, 
-                    float fps, 
-                    sf::Vector2f CameraPos,
-                    float zoom,
-                    const std::string& selectedTileName,
-                    const std::string& hoveredInfo);
+        void render(sf::RenderWindow& window, const HUDData& data);
 
     private:
             sf::Font m_font;
