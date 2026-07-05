@@ -29,3 +29,19 @@ To build and run the simulation, you will need:
    ```bash
    ./build/world_sim
    ```
+
+## Tech Stack
+- **Language**: C++20
+- **Build System**: CMake & Make
+- **Graphics & Windowing**: SFML 3
+- **UI Toolkit**: ImGui (with ImGui-SFML binding)
+- **Architecture**: Custom Entity Component System (ECS)
+
+## Project Structure
+- `include/`: Contains all header files (`.hpp`), reflecting the source directory structure.
+- `src/`: Contains all source files (`.cpp`).
+  - `ECS/`: Core Entity Component System architecture (Entities, Components, World).
+  - `Systems/`: Logic systems that operate on entities (e.g., Movement, Render, PheromoneSense).
+  - `UI/`: User interface and ImGui debug panels.
+  - `World/`: Environment systems such as the pheromone grid.
+- `assets/`: Static resources for the simulation.
