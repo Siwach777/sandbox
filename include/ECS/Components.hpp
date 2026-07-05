@@ -49,6 +49,7 @@ enum class AntState {
 struct AntBehavior {
     AntState state = AntState::Idle;
     float stateTimer = 0.f;
+    bool followingPheromone = false;  // Set by PheromoneSenseSystem each frame
 };
 
 struct Heading {

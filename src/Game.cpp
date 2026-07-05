@@ -59,8 +59,8 @@ Game::Game() : m_window(sf::VideoMode(sf::Vector2u(config.WIN_WIDTH, config.WIN_
 
      // ================= ADD THIS =================
     // Spawn a continuous rectangle of food centered on the nest
-    float halfWidth = 400.f;  // Distance left and right from the nest
-    float halfHeight = 300.f; // Distance up and down from the nest
+    float halfWidth = 600.f;  // Distance left and right from the nest
+    float halfHeight = 280.f; // Distance up and down from the nest
     float step = 4.f;         // Spacing between food items (approx. food diameter)
     // 1. Draw the Top and Bottom horizontal lines
     for (float x = nestPos.x - halfWidth; x <= nestPos.x + halfWidth; x += step) {
@@ -196,7 +196,7 @@ void Game::update(sf::Time dt) {
 
     if (!config.paused) {
         for (Entity entity : m_world.ants) {
-            if ((m_tickcount + entity) % static_cast<int>((config.TILE_SIZE * TICKS_PER_SECOND * 5) / config.speed) != 0) {continue;}
+            if ((m_tickcount + entity) % static_cast<int>((config.TILE_SIZE * TICKS_PER_SECOND * 3) / config.speed) != 0) {continue;}
             if (m_world.positions.count(entity) == 0) { continue; }
             auto& pos = m_world.positions[entity];
 
@@ -218,9 +218,9 @@ void Game::update(sf::Time dt) {
         }
         m_pheromones.evaporate(config.pheromoneEvapRate, dt.asSeconds());
         ++m_tickcount;
-        // if (m_tickcount % 8 == 0 && config.pheromoneDiffuseEveryNTicks != 0) {
-        //     m_pheromones.diffuse(config.pheromoneDiffusionRate, dt.asSeconds());
-        // }
+        if (m_tickcount % static_cast<int>((config.TILE_SIZE * TICKS_PER_SECOND * 2) / config.speed) == 0 && config.pheromoneDiffuseEveryNTicks != 0) {
+            m_pheromones.diffuse(config.pheromoneDiffusionRate, dt.asSeconds());
+        }
         Systems::pheromoneSense(m_world, m_pheromones, m_grid.getTileSize(), dt);
         Systems::interaction(m_world);
         Systems::behavior(m_world, dt);

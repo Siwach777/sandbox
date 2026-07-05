@@ -12,6 +12,10 @@ namespace Systems {
                 if (world.antBehaviors[entity].state != AntState::Foraging) {
                     continue;
                 }
+                // Skip wander noise when PheromoneSense is actively steering
+                if (world.antBehaviors[entity].followingPheromone) {
+                    continue;
+                }
             }
 
             auto& vel = world.velocities[entity];
@@ -19,7 +23,7 @@ namespace Systems {
             wander.timer -= dt.asSeconds();
             if (wander.timer <= 0.f) {
                 if (world.headings.count(entity)) {
-                    world.headings[entity].angle += Random::getFloat(-0.03f, 0.03f);
+                    world.headings[entity].angle += Random::getFloat(-0.5f, 0.5f);
                 } else {
                     float angle = Random::getFloat(0.f, 6.28318f);
                     vel.x = std::cos(angle) * wander.speed;
